@@ -10,12 +10,21 @@ namespace nix_cars.Components.States
     {
         Model plane;
         Vector3 playerPosition;
-        float moveSpeed = 2f;
-
+        float moveSpeed = 10f;
+        Model map;
+        Texture2D[] numTex;
         public GSRun() : base()
         {
             plane = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/plane");
+            map = game.Content.Load<Model>(NixCars.ContentFolder3D + "maps/peach/peach");
+            numTex = new Texture2D[101];
+            for(int i = 0; i < 101; i++)
+            {
+                numTex[i] = game.Content.Load<Texture2D>(NixCars.ContentFolder3D + "basic/Tex/num/"+i);
+            }
             NixCars.AssignEffectToModel(plane, game.basicModelEffect.effect);
+            NixCars.AssignEffectToModel(map, game.basicModelEffect.effect);
+
             playerPosition = game.camera.position;
         }
         public override void OnSwitch()
@@ -45,15 +54,21 @@ namespace nix_cars.Components.States
                 GameStateManager.SwitchTo(State.RUN);
             }
             
-            game.camera.MoveBy(km.Forward.IsDown(), km.Backward.IsDown(), km.Left.IsDown(), km.Right.IsDown(),
-               keyState.IsKeyDown(Keys.Space), keyState.IsKeyDown(Keys.LeftControl),
-               keyState.IsKeyDown(Keys.LeftShift)?moveSpeed:moveSpeed*2, uDeltaTimeFloat);
+            //game.camera.MoveBy(km.Forward.IsDown(), km.Backward.IsDown(), km.Left.IsDown(), km.Right.IsDown(),
+            //   keyState.IsKeyDown(Keys.Space), keyState.IsKeyDown(Keys.LeftControl),
+            //   keyState.IsKeyDown(Keys.LeftShift)?moveSpeed:moveSpeed*2, uDeltaTimeFloat);
 
             CarManager.UpdatePlayerCar(keyState.IsKeyDown(Keys.Up), keyState.IsKeyDown(Keys.Down), keyState.IsKeyDown(Keys.Left),
                 keyState.IsKeyDown(Keys.Right), uDeltaTimeFloat);
+            var c = CarManager.playerCar;
 
-            game.camera.RotateBy(mouseDelta);
+            game.camera.SmoothRotateTo(c.frontDirection);
 
+            game.camera.SmoothMoveTo(c.position - c.frontDirection * 5
+                + Vector3.Up * 5 
+                - c.rightDirection * c.currentTurnRate * 1.35f);
+
+            game.camera.Update(uDeltaTimeFloat);
 
         }
         public override void Draw(GameTime gameTime)
@@ -74,7 +89,8 @@ namespace nix_cars.Components.States
             //game.skybox.Draw(game.camera.view, game.camera.projection, game.camera.position);
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            DrawPlane();
+            //DrawPlane();
+            DrawMap();
             CarManager.DrawPlayerCar();
 
             game.lightsManager.DrawLightGeo();
@@ -106,12 +122,13 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetBlurH(game.blurHTarget);
             game.deferredEffect.SetBlurV(game.blurVTarget);
 
+            game.spriteBatch.Begin();
+            //game.spriteBatch.Draw(game.bloomFilterTarget, Vector2.Zero, Color.White);
             game.fullScreenQuad.Draw(game.deferredEffect.effect);
 
             //.ToString("F2")
             var str = $"{FPS}  {CarManager.playerCar.speed.ToString("F2")}";
                 // p {game.camera.pitch.ToString("F2")} y {game.camera.yaw.ToString("F2")}";
-            game.spriteBatch.Begin();
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
             game.spriteBatch.End();
 
@@ -135,6 +152,40 @@ namespace nix_cars.Components.States
                 game.basicModelEffect.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(w)));
 
                 mesh.Draw();
+            }
+        }
+
+        void DrawMap()
+        {
+            game.basicModelEffect.SetTech("number");
+            game.basicModelEffect.SetKA(0.3f);
+            game.basicModelEffect.SetKD(0.9f);
+            game.basicModelEffect.SetKS(0.8f);
+            game.basicModelEffect.SetShininess(30f);
+            game.basicModelEffect.SetColor(Color.White.ToVector3());
+            game.basicModelEffect.SetTiling(Vector2.One);
+
+
+            foreach(var mesh in map.Meshes)
+            {
+                
+                var w = mesh.ParentBone.Transform * Matrix.CreateScale(0.010f) * Matrix.CreateTranslation(0,-5,0);
+                game.basicModelEffect.SetWorld(w);
+                game.basicModelEffect.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(w)));
+
+                for (int i = 0; i < mesh.MeshParts.Count; i++)
+                {
+                    var part = mesh.MeshParts[i];
+                    game.basicModelEffect.SetColorTexture(numTex[i]);
+
+                    foreach (var pass in game.basicModelEffect.effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        game.GraphicsDevice.SetVertexBuffer(part.VertexBuffer);
+                        game.GraphicsDevice.Indices = part.IndexBuffer;
+                        game.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, part.VertexOffset, part.StartIndex, part.PrimitiveCount);
+                    }
+                }
             }
         }
 

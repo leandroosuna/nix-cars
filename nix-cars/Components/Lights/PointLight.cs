@@ -20,8 +20,8 @@ namespace nix_cars.Components.Lights
             this.radius = radius;
             this.position = position;
             collider = new BoundingSphere(position, radius);
-            scale = 0.008f * radius;
-            
+            scale = 0.01f * radius;
+            //scale = 0.00008f * radius;
             world = Matrix.CreateScale(scale) * Matrix.CreateTranslation(position);
 
         }

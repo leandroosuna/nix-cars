@@ -95,6 +95,7 @@ namespace nix_cars
             lightsManager = new LightsManager();
 
             GameStateManager.Init();
+            LightVolume.Init();
             CarManager.Init();
         }
 

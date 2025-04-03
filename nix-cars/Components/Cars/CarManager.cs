@@ -52,6 +52,7 @@ namespace nix_cars.Components.Cars
 
             foreach (var mesh in playerCar.model.Meshes)
             {
+                e.SetKD(0.9f);
                 //var w = mesh.ParentBone.Transform * Matrix.CreateScale(.5f) * Matrix.CreateTranslation(0, 1, 0);
                 e.SetWorld(mesh.ParentBone.Transform * playerCar.world);
                 e.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(mesh.ParentBone.Transform * playerCar.world)));
@@ -65,51 +66,57 @@ namespace nix_cars.Components.Cars
                 mp = 0;
                 foreach (var part in mesh.MeshParts)
                 {
+                    if (m == 0)
+                    {
+                        if (mp == 0)
+                            e.SetColor(Color.Red.ToVector3());
+
+                        else if (mp == 1)
+                            e.SetColor(Color.Gray.ToVector3());
+                        else if (mp == 2)
+                            e.SetColor(new Vector3(.1f, .1f, .1f));
+                        else if (mp == 3)
+                        {
+                            e.SetColor(playerCar.brakeL.color);
+                            e.SetKD(0f);
+                        }
+                        else if (mp == 4)
+                        {
+                            e.SetColor(Color.White.ToVector3());
+                            e.SetKD(0f);
+                        }
+                        else if (mp == 5)
+                        {
+                            e.SetColor(Color.White.ToVector3());
+                            e.SetKD(0.9f);
+                        }
+
+                    }
+                    else
+                    {
+                        if (m == 1 || m == 2)
+                        {
+
+                            var wheelWorld = playerCar.frontWheelWorld * mesh.ParentBone.Transform * playerCar.world;
+
+                            e.SetWorld(wheelWorld);
+                            e.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(wheelWorld)));
+                        }
+                        else
+                        {
+                            var wheelWorld = playerCar.backWheelWorld * mesh.ParentBone.Transform * playerCar.world;
+
+                            e.SetWorld(wheelWorld);
+                            e.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(wheelWorld)));
+                        }
+                        if (mp == 0)
+                            e.SetColor(Color.Black.ToVector3());
+                        else
+                            e.SetColor(Color.White.ToVector3());
+                    }
+
                     foreach (var pass in ee.CurrentTechnique.Passes)
                     {
-
-                        if (m == 0)
-                        {
-                            if (mp == 0)
-                                e.SetColor(Color.Red.ToVector3());
-                                
-                            else if (mp == 1)
-                                e.SetColor(Color.Gray.ToVector3());
-                            else if (mp == 2)
-                                e.SetColor(new Vector3(.1f, .1f, .1f));
-                            else if (mp == 3)
-                                e.SetColor(Color.DarkRed.ToVector3());
-                            else if (mp == 4)
-                                e.SetColor(Color.White.ToVector3());
-                            else if (mp == 5)
-                                e.SetColor(Color.White.ToVector3());
-                            
-                        }
-                        else 
-                        {
-                            if (m == 1 || m == 2)
-                            {
-                               
-                                var wheelWorld = playerCar.frontWheelWorld * mesh.ParentBone.Transform * playerCar.world;
-                                
-                                e.SetWorld(wheelWorld);
-                                e.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(wheelWorld)));
-                            }
-                            else
-                            {
-                                var wheelWorld = playerCar.backWheelWorld * mesh.ParentBone.Transform * playerCar.world;
-
-                                e.SetWorld(wheelWorld);
-                                e.SetInverseTransposeWorld(Matrix.Invert(Matrix.Transpose(wheelWorld)));
-                            }
-                            if (mp == 0)
-                                e.SetColor(Color.Black.ToVector3());
-                            else
-                                e.SetColor(Color.White.ToVector3());
-                        }
-                        
-                       
-
                         pass.Apply();
                         game.GraphicsDevice.SetVertexBuffer(part.VertexBuffer);
                         game.GraphicsDevice.Indices = part.IndexBuffer;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using nix_cars.Components.Lights;
 using SharpDX.Direct2D1.Effects;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,10 @@ namespace nix_cars.Components.Cars
         public Vector3 position = Vector3.Zero;
         public float yaw = 0f;
         public float pitch = 0f;
+        public Vector3 frontDirection;
+        public Vector3 rightDirection;
+        public Vector3 upDirection;
+
         public Model model;
         public CarType type;
         public Vector3[] colors;
@@ -26,9 +31,8 @@ namespace nix_cars.Components.Cars
         public Matrix frontWheelWorld;
         public Matrix backWheelWorld;
 
-
         public float speed;
-        public float acceleration = 20.0f;
+        public float acceleration = 30.0f;
         public float maxSpeed = 100.0f;
         public float brakeForce = 50.0f;
         public float friction = 8.0f;
@@ -40,19 +44,39 @@ namespace nix_cars.Components.Cars
         public float wheelRotationAngle;
         
         float turnInput;
-        float currentTurnRate;
+        public float currentTurnRate;
         float targetTurnRate;
         float steeringSharpness = 4f;
         float returnSharpness = 8f;
 
+        public PointLight brakeL;
+        public PointLight brakeR;
+        public ConeLight frontL;
+        public ConeLight frontR;
         public Car(Model model, CarType type)
         {
             this.model = model;
             this.type = type;
             mxScale = Matrix.CreateScale(scale);
 
-        }
+            brakeL = new PointLight(position, 1.5f, new Vector3(1, 0, 0), new Vector3(1, 0, 0));
+            brakeR = new PointLight(position, 1.5f, new Vector3(1, 0, 0), new Vector3(1, 0, 0));
+            frontL = new ConeLight(position, frontDirection, 3f, 7f, Vector3.One, Vector3.One);
+            frontR = new ConeLight(position, frontDirection, 3f, 7f, Vector3.One, Vector3.One);
 
+
+            var lm = NixCars.GameInstance().lightsManager;
+            lm.Register(brakeL);
+            lm.Register(brakeR);
+            lm.Register(frontL);
+            lm.Register(frontR);
+
+            //frontL.hasLightGeo = true;
+            //frontR.hasLightGeo = true;
+
+            brakeL.enabled = false;
+            brakeR.enabled = false;
+        }
         public void Update(Vector3 position, float yaw, float pitch)
         {
             this.position = position;
@@ -60,16 +84,17 @@ namespace nix_cars.Components.Cars
             this.pitch = pitch;
 
             CalculateWorld();
+            CalculateLightsPosition();
         }
-
         public void Update(bool f, bool b, bool l, bool r, float deltaTime)
         {
             Engine(f, b, deltaTime);
             Steering(l, r, deltaTime);
             CalculateNewPosition(deltaTime);
             CalculateWorld();
+            HandleLights(b);
+            
         }
-
         void Engine(bool f, bool b, float deltaTime)
         {
             if (f)
@@ -88,17 +113,13 @@ namespace nix_cars.Components.Cars
                     Math.Min(speed + deceleration, 0);
             }
 
-            speed = MathHelper.Clamp(speed, -maxSpeed / 2, maxSpeed);
+            speed = MathHelper.Clamp(speed, -maxSpeed / 4, maxSpeed);
 
             float distanceMoved = speed * deltaTime;
             wheelRotationAngle += distanceMoved / wheelRadius;
             wheelRotationAngle = MathHelper.WrapAngle(wheelRotationAngle);
 
         }
-
-
-
-
         void Steering(bool l, bool r, float deltaTime)
         {
             turnInput = 0;
@@ -145,6 +166,50 @@ namespace nix_cars.Components.Cars
 
             position += direction * speed * deltaTime;
         }
+
+        void CalculateLightsPosition()
+        {
+            brakeL.position = position - frontDirection * 2.65f - rightDirection * 0.75f + upDirection * 1f;
+            brakeR.position = position - frontDirection * 2.65f + rightDirection * 0.75f + upDirection * 1f;
+
+            frontL.position = position + frontDirection * 6f - rightDirection * .8f + upDirection * .90f;
+            frontL.direction = frontDirection;
+            frontR.position = position + frontDirection * 6f + rightDirection * .8f + upDirection * .90f;
+            frontR.direction = frontDirection;
+        }
+
+        void HandleLights(bool b)
+        {
+            brakeL.enabled = false;
+            brakeR.enabled = false;
+            brakeL.color = Vector3.Zero;
+            brakeR.color = Vector3.Zero;
+            if (speed <= 0 || b)
+            {
+
+
+                if (speed >= 0)
+                {
+                    brakeL.color = Vector3.UnitX;
+                    brakeL.specularColor = brakeL.color;
+                    brakeR.color = Vector3.UnitX;
+                    brakeR.specularColor = brakeR.color;
+                    brakeL.enabled = true;
+                    brakeR.enabled = true;
+                }
+                else if (b)
+                {
+                    brakeL.color = Vector3.One;
+                    brakeL.specularColor = brakeL.color;
+                    brakeR.color = Vector3.One;
+                    brakeR.specularColor = brakeR.color;
+                    brakeL.enabled = true;
+                    brakeR.enabled = true;
+                }
+            }
+            CalculateLightsPosition();
+        }
+        Vector3 tempFront;
         void CalculateWorld()
         {
             world = mxScale *
@@ -155,7 +220,6 @@ namespace nix_cars.Components.Cars
             if (speed < 0)
                 steeringYaw = -steeringYaw;
 
-
             float wheelPitch = wheelRotationAngle; 
 
             Matrix steering = Matrix.CreateRotationZ(steeringYaw);
@@ -163,9 +227,16 @@ namespace nix_cars.Components.Cars
 
             frontWheelWorld = rotation * steering;
             backWheelWorld = rotation;
+
+            tempFront.X = MathF.Cos(-yaw + MathHelper.PiOver2) * MathF.Cos(pitch);
+            tempFront.Y = MathF.Sin(pitch);
+            tempFront.Z = MathF.Sin(-yaw + MathHelper.PiOver2) * MathF.Cos(pitch);
+
+            frontDirection = Vector3.Normalize(tempFront);
+
+            rightDirection = Vector3.Normalize(Vector3.Cross(frontDirection, Vector3.Up));
+            upDirection = Vector3.Normalize(Vector3.Cross(rightDirection, frontDirection));
         }
-
-
     }
 
     public enum CarType

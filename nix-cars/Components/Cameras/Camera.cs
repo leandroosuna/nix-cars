@@ -42,7 +42,7 @@ namespace nix_cars.Components.Cameras
             yaw = 90;
             pitch = -45;
 
-            UpdateCameraVectors();
+            UpdateVectors();
             CalculateView();
 
             CalculateProjection();
@@ -101,20 +101,53 @@ namespace nix_cars.Components.Cameras
             else if (pitch < -89.0f)
                 pitch = -89.0f;
 
-            UpdateCameraVectors();
+            UpdateVectors();
             CalculateView();
 
             frustum.Matrix = view * projection;
+        }
+
+        Vector3 targetDirection;
+        Vector3 targetPosition;
+        public float smoothRotateSpeed = 3f;
+        public float smoothMoveSpeed = 12f;
+
+        public void SmoothRotateTo(Vector3 target)
+        {
+            targetDirection = target;
+        }
+
+        public void SmoothMoveTo(Vector3 target)
+        {
+            targetPosition = target;
+        }
+        public void Update(float deltaTime)
+        {
+            frontDirection = Vector3.Lerp(frontDirection, targetDirection, deltaTime * smoothRotateSpeed);
+            frontDirection.Normalize();
+
+            position = Vector3.Lerp(position, targetPosition, deltaTime * smoothMoveSpeed);
+
+            UpdatePitchYawVectors();
+            CalculateView();
         }
 
         public void ResetToCenter()
         {
             yaw = 0;
             pitch = 0;
-            UpdateCameraVectors();
+            UpdateVectors();
             CalculateView();
         }
-        public void UpdateCameraVectors()
+        public void UpdatePitchYawVectors()
+        {
+            yaw = MathHelper.ToDegrees(MathF.Atan2(frontDirection.X, frontDirection.Z));
+            pitch = MathHelper.ToDegrees(MathF.Asin(frontDirection.Y));
+
+            rightDirection = Vector3.Normalize(Vector3.Cross(frontDirection, Vector3.Up));
+            upDirection = Vector3.Normalize(Vector3.Cross(rightDirection, frontDirection));
+        }
+        public void UpdateVectors()
         {
             Vector3 tempFront;
 

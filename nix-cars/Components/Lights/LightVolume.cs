@@ -42,7 +42,7 @@ namespace nix_cars.Components.Lights
             sphere = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/sphere");
             cube = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/cube");
             lightSphere = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/lightSphere");
-            lightCone = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/cone");
+            lightCone = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/lightCone");
             lightCylinder = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/lightCylinder");
             deferredEffect = game.deferredEffect;
             basicModelEffect = game.basicModelEffect;
