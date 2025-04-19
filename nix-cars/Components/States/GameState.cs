@@ -28,6 +28,7 @@ namespace nix_cars.Components.States
         Point mousePosition;
         Vector2 delta;
         public bool mouseLocked;
+        public bool camLocked = false;
         public Vector2 mouseDelta;
         float mouseSensitivity = 0.15f;
         float mouseSensAdapt = .09f;
@@ -60,13 +61,18 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetCameraPosition(game.camera.position);
             
             mouseState = Mouse.GetState();
-            UpdateMousePositionDelta();
+            if(!camLocked)
+                UpdateMousePositionDelta();
+            else
+                mouseDelta = Vector2.Zero;
 
             keyState = Keyboard.GetState();
             keysDown.RemoveAll(key => !key.IsDown());
             Key.Update(mouseState, keyState);
 
             game.lightsManager.Update(uDeltaTimeFloat);
+
+            
 
         }
         public virtual void Draw(GameTime gameTime)
@@ -75,7 +81,7 @@ namespace nix_cars.Components.States
             dDeltaTimeFloat = (float)uDeltaTimeDouble;
             FPS = (int)(1 / dDeltaTimeDouble);
 
-            //game.gizmos.UpdateViewProjection(game.camera.view, game.camera.projection);
+
         }
 
 

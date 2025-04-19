@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using nix_cars.Components.Cameras;
 using nix_cars.Components.Cars;
+using nix_cars.Components.Collisions;
 using nix_cars.Components.Effects;
+using nix_cars.Components.Gizmos;
 using nix_cars.Components.Lights;
 using nix_cars.Components.States;
 using System;
@@ -42,6 +44,8 @@ namespace nix_cars
         public RenderTarget2D blurVTarget;
         public RenderTarget2D lightTarget;
         public string graphicsPreset;
+
+        public Gizmos gizmos;
         public NixCars()
         {
             Graphics = new GraphicsDeviceManager(this);
@@ -49,7 +53,7 @@ namespace nix_cars
             IsMouseVisible = true;
             game = this;
 
-            
+            graphicsPreset = "ultra";
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
@@ -71,7 +75,6 @@ namespace nix_cars
             SetFPSLimit(165);
             Graphics.SynchronizeWithVerticalRetrace = false;
             Graphics.ApplyChanges();
-
 
         }
 
@@ -97,6 +100,9 @@ namespace nix_cars
             GameStateManager.Init();
             LightVolume.Init();
             CarManager.Init();
+            gizmos = new Gizmos();
+            gizmos.LoadContent(GraphicsDevice);
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -104,7 +110,9 @@ namespace nix_cars
             CheckGameRegainedFocus();
 
             gameState.Update(gameTime);
-    
+            
+            gizmos.UpdateViewProjection(game.camera.view, game.camera.projection);
+            
             base.Update(gameTime);
         }
 

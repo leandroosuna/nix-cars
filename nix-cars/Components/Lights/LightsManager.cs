@@ -39,7 +39,10 @@ namespace nix_cars.Components.Lights
             {
                 l.Update();
 
-                if(l.enabled && game.camera.FrustumContains(l.collider))
+                var inView = game.camera.FrustumContains(l.collider);
+
+
+                if (l.enabled && inView)
                     lightsToDraw.Add(l);
             }
         }
@@ -66,7 +69,7 @@ namespace nix_cars.Components.Lights
                     if (l is PointLight)
                         effect.SetTech("point_light");
                     if (l is ConeLight)
-                        effect.SetTech("point_light");
+                        effect.SetTech("cone_light");
                     if (l is CylinderLight)
                         effect.SetTech("cylinder_light");
                     
@@ -84,9 +87,31 @@ namespace nix_cars.Components.Lights
         { 
             lights.Add(volume);
         }
+        public void Register(List<LightVolume> volumes)
+        {
+            lights.AddRange(volumes);
+        }
+        public void Register(List<PointLight> points)
+        {
+            lights.AddRange(points);
+        }
         public void Destroy(LightVolume volume)
         {
             lights.Remove(volume);
+        }
+        public void Destroy(List<LightVolume> volumes)
+        {
+            foreach (var volume in volumes)
+            {
+                lights.Remove(volume);
+            }
+        }
+        public void Destroy(List<PointLight> points)
+        {
+            foreach (var p in points)
+            {
+                lights.Remove(p);
+            }
         }
     }
 }

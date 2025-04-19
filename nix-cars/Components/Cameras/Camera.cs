@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using nix_cars.Components.Cars;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,14 +32,16 @@ namespace nix_cars.Components.Cameras
         public BoundingFrustum frustum;
         public bool isFree = false;
 
+        NixCars game;
         public Camera(float aspectRatio)
         {
+            game = NixCars.GameInstance();
             frustum = new BoundingFrustum(Matrix.Identity);
             fieldOfView = MathHelper.ToRadians(95);
             this.aspectRatio = aspectRatio;
             position = new Vector3(0, 5f, -5);
             nearPlaneDistance = .1f;
-            farPlaneDistance = 1000;
+            farPlaneDistance = 2000;
             yaw = 90;
             pitch = -45;
 
@@ -104,7 +107,7 @@ namespace nix_cars.Components.Cameras
             UpdateVectors();
             CalculateView();
 
-            frustum.Matrix = view * projection;
+            
         }
 
         Vector3 targetDirection;
@@ -115,6 +118,7 @@ namespace nix_cars.Components.Cameras
         public void SmoothRotateTo(Vector3 target)
         {
             targetDirection = target;
+            
         }
 
         public void SmoothMoveTo(Vector3 target)
@@ -160,15 +164,35 @@ namespace nix_cars.Components.Cameras
             rightDirection = Vector3.Normalize(Vector3.Cross(frontDirection, Vector3.Up));
             upDirection = Vector3.Normalize(Vector3.Cross(rightDirection, frontDirection));
         }
+
         void CalculateView()
         {
             view = Matrix.CreateLookAt(position, position + frontDirection, upDirection);
+            frustum.Matrix = view * projection;
         }
         void CalculateProjection()
         {
             projection = Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
+            frustum.Matrix = view * projection;
         }
 
+        public void ToggleFree()
+        {
+            if(!isFree)
+            {
+                //frontDirection = CarManager.playerCar.frontDirection;
+                //UpdatePitchYawVectors();
+                //CalculateView();
+                game.IsMouseVisible = false;
+                game.gameState.mouseDelta = Vector2.Zero;
+            }
+            else
+            {
+                game.IsMouseVisible = true;
+            }
+            isFree = !isFree; 
+
+        }
         public bool FrustumContains(BoundingSphere collider)
         {
             return !frustum.Contains(collider).Equals(ContainmentType.Disjoint);

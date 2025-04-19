@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace nixfps.Components.Gizmos
+namespace nix_cars.Components.Gizmos
 {
     /// <summary>
     ///     Gizmo that is drawn using non-user indexed line lists.

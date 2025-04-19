@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using nix_cars;
 
-namespace nixfps.Components.Gizmos
+namespace nix_cars.Components.Gizmos
 {
     /// <summary>
     ///     Renders Gizmos

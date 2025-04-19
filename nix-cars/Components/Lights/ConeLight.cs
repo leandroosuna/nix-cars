@@ -33,8 +33,8 @@ namespace nix_cars.Components.Lights
             scaleVec = new Vector3(width / 2, length, width / 2);
             scaleVec = scaleVec * 0.01f;
             world = Matrix.CreateScale(scaleVec) *
-                Matrix.CreateFromYawPitchRoll(yaw, pitch, 0);
-                Matrix.CreateTranslation(position) ;
+                Matrix.CreateFromYawPitchRoll(yaw, pitch - MathHelper.PiOver2, 0) *
+                Matrix.CreateTranslation(position + direction * length / 2);
 
         }
         

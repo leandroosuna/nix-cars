@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace nixfps.Components.Gizmos
+namespace nix_cars.Components.Gizmos
 {
     /// <summary>
     ///     Gizmo for drawing Wire Spheres.

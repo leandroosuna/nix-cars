@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace nixfps.Components.Gizmos
+namespace nix_cars.Components.Gizmos
 {
     /// <summary>
     ///     Abstract class for any geometry that contains a circle.
