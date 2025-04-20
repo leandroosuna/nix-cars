@@ -66,7 +66,7 @@ namespace nix_cars.Components.Lights
 
             world = Matrix.CreateScale(scaleVec) *
                 Matrix.CreateFromYawPitchRoll(yaw, pitch - MathHelper.PiOver2, 0)*
-                Matrix.CreateTranslation(position + direction * length / 2);
+                Matrix.CreateTranslation(position + direction * length);
         }
     }
 }

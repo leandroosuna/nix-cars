@@ -21,7 +21,7 @@ namespace nix_cars.Components.Cars
         public float offsetBrakeRightDir = 0.75f;
         public float offsetBrakeUpDir = 1f;
 
-        public float offsetHeadFrontDir = 5f;
+        public float offsetHeadFrontDir = 2.5f;
         public float offsetHeadRightDir = 0.8f;
         public float offsetHeadUpDir = 0.9f;
 
