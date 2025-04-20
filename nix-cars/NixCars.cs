@@ -1,14 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json.Linq;
 using nix_cars.Components.Cameras;
 using nix_cars.Components.Cars;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Effects;
 using nix_cars.Components.Gizmos;
 using nix_cars.Components.Lights;
+using nix_cars.Components.Network;
 using nix_cars.Components.States;
 using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace nix_cars
 {
@@ -46,14 +50,19 @@ namespace nix_cars
         public string graphicsPreset;
 
         public Gizmos gizmos;
+        public JObject CFG;
+        public Stopwatch mainStopwatch = new Stopwatch();
         public NixCars()
         {
+            
+            CFG = JObject.Parse(File.ReadAllText("app-settings.json"));
+
             Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             game = this;
 
-            graphicsPreset = "ultra";
+            graphicsPreset = CFG["GraphicsPreset"].Value<string>();
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
@@ -76,6 +85,20 @@ namespace nix_cars
             Graphics.SynchronizeWithVerticalRetrace = false;
             Graphics.ApplyChanges();
 
+            if (!CFG.ContainsKey("ClientID"))
+            {
+                var ri = new Random().NextInt64();
+                CFG["ClientID"] = (uint)ri;
+
+                File.WriteAllText("app-settings.json", CFG.ToString());
+            }
+            Exiting += (s, e) => {
+
+                NetworkManager.Client.Disconnect();
+                NetworkManager.StopNetThread();
+                mainStopwatch.Stop();
+
+            };
         }
 
         protected override void Initialize()
@@ -102,6 +125,9 @@ namespace nix_cars
             CarManager.Init();
             gizmos = new Gizmos();
             gizmos.LoadContent(GraphicsDevice);
+
+            mainStopwatch.Start();
+            NetworkManager.Connect();
 
         }
 

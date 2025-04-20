@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Input;
 using nix_cars.Components.Cars;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
-using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -95,11 +94,11 @@ namespace nix_cars.Components.States
                 
             }
 
-            CarManager.UpdatePlayerCar(keyState.IsKeyDown(Keys.Up), keyState.IsKeyDown(Keys.Down), keyState.IsKeyDown(Keys.Left),
+            CarManager.UpdateLocalPlayer(keyState.IsKeyDown(Keys.Up), keyState.IsKeyDown(Keys.Down), keyState.IsKeyDown(Keys.Left),
                 keyState.IsKeyDown(Keys.Right), uDeltaTimeFloat);
             var c = CarManager.localPlayer;
 
-            //CarManager.enemyCar.EnemyUpdate(uDeltaTimeFloat);
+            CarManager.UpdatePlayers(game.mainStopwatch.ElapsedMilliseconds);
 
             if (!game.camera.isFree)
             {
@@ -195,7 +194,8 @@ namespace nix_cars.Components.States
 
             //DrawPlane();
             DrawMap();
-            CarManager.DrawPlayerCar();
+            
+            CarManager.DrawPlayers();
 
             game.lightsManager.DrawLightGeo();
 

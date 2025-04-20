@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
 using System;
+using System.Threading;
 
 
 namespace nix_cars.Components.Cars
@@ -40,7 +41,6 @@ namespace nix_cars.Components.Cars
         public LocalPlayer(Car car) : base(car )
         {
             
-
         }
 
         public void Update(bool f, bool b, bool l, bool r, float deltaTime)
@@ -167,6 +167,9 @@ namespace nix_cars.Components.Cars
                 direction.Normalize();
 
             var horizontal = direction * speed;
+            horizontalVelocity.X = horizontal.X;
+            horizontalVelocity.Y = horizontal.Z;
+
             var vertical = -Vector3.Up * gravity;
 
             velocity = (horizontal + vertical + collisionVelocity);

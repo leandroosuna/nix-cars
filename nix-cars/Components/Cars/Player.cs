@@ -4,12 +4,17 @@ using Microsoft.Xna.Framework.Input;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 
 
 namespace nix_cars.Components.Cars
 {
     public abstract class Player
     {
+        public uint id;
+        public string name;
+        public bool connected;
         public Vector3 position = new Vector3(232f,15,-323);
         public float yaw = 0f;
         public float pitch = 0f;
@@ -27,6 +32,7 @@ namespace nix_cars.Components.Cars
         public Matrix backWheelWorld;
 
         public Vector3 velocity;
+        public Vector2 horizontalVelocity;
         public Vector3 frameVelocity;
 
         public float speed;
@@ -35,6 +41,7 @@ namespace nix_cars.Components.Cars
         
         public float currentTurnRate;
 
+        public List<PlayerCache> netDataCache = new List<PlayerCache>();
 
         // TODO: server side.
         //public void Collided(Vector3 velocity) 
@@ -45,7 +52,7 @@ namespace nix_cars.Components.Cars
         //}
         //public bool collisionImpulse = false;
         //public float collisionImpulseTime = 1f;
-        
+
         //void UpdateCollisionVelocity(float deltaTime)
         //{
         //    if(collisionImpulse)
@@ -63,11 +70,17 @@ namespace nix_cars.Components.Cars
         //        }
         //    }
         //}
+        
+        public Player()
+        {
+            mxScale = Matrix.CreateScale(scale);
+        }
         public Player(Car car)
         {
             this.car = car;
             car.Init(this);
             mxScale = Matrix.CreateScale(scale);
+
         }
         
         public void CalculateWorld()

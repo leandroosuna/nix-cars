@@ -17,8 +17,7 @@ namespace nix_cars.Components.Cars
         static NixCars game;
 
         public static LocalPlayer localPlayer;
-        public static Player enemyCar;
-        
+        public static List<EnemyPlayer> players = new List<EnemyPlayer>();
         public static Model GetModel(string name)
         {
             foreach (var (n, m) in carModels)
@@ -40,24 +39,56 @@ namespace nix_cars.Components.Cars
             foreach (var (_,m) in carModels)
                 NixCars.AssignEffectToModel(m, game.basicModelEffect.effect);
 
+            // TODO: get type and colors from file.
             var pc = new CarSport();
             
             localPlayer = new LocalPlayer(pc);
-
+            
             //enemyCar = new Player(GetModel("sport"), CarType.Sport);
             //enemyCar.position = new Vector3(200f, 10, -300);
 
         }
-        public static void UpdatePlayerCar(bool f, bool b, bool l, bool r, float deltaTime)
+        public static void UpdateLocalPlayer(bool f, bool b, bool l, bool r, float deltaTime)
         {
             localPlayer.Update(f, b, l, r, deltaTime);
         }
-        public static void DrawPlayerCar()
+
+        public static void UpdatePlayers(long now)
+        {
+            foreach (var p in players)
+                p.Update(now);
+        }
+        public static void DrawPlayers()
         {
             localPlayer.car.Draw();
+
+            foreach(var p in players)
+            {
+                if(p.connected)
+                    p.car.Draw();
+            }
         }
 
+        public static Player GetPlayerFromId(uint id, bool createIfNull = false)
+        {
+            if (id == localPlayer.id) return localPlayer;
 
+            foreach (var player in players)
+            {
+                if (player.id == id)
+                {
+                    return player;
+                }
+            }
+            if (createIfNull)
+            {
+                var p = new EnemyPlayer(id);
+                players.Add(p);
+                return p;
+            }
+
+            return new EnemyPlayer(uint.MaxValue);
+        }
     }
 
 
