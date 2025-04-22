@@ -65,7 +65,7 @@ namespace nix_cars.Components.States
         
         public override void Update(GameTime gameTime)
         {
-            
+            var lp = CarManager.localPlayer;
             base.Update(gameTime);
 
             if (km.Escape.IsDown() && !keysDown.Contains(km.Escape))
@@ -88,40 +88,42 @@ namespace nix_cars.Components.States
 
                 game.camera.ToggleFree();
             }
-            if (km.CAPS.IsDown() && !keysDown.Contains(km.CAPS))
-            {
-                keysDown.Add(km.CAPS);
+            //if (km.CAPS.IsDown() && !keysDown.Contains(km.CAPS))
+            //{
+            //    keysDown.Add(km.CAPS);
 
-                CarManager.localPlayer.Collided(new Vector3(10, 0, 10));
+            //    lp.Collided(new Vector3(10, 0, 10));
                 
-            }
+            //}
 
-            CarManager.UpdateLocalPlayer(keyState.IsKeyDown(Keys.Up), keyState.IsKeyDown(Keys.Down), keyState.IsKeyDown(Keys.Left),
-                keyState.IsKeyDown(Keys.Right), uDeltaTimeFloat);
-            var c = CarManager.localPlayer;
-
-            CarManager.UpdatePlayers();
+            
+            
 
             if (!game.camera.isFree)
             {
-                game.camera.SmoothRotateTo(Vector3.Normalize(c.frontDirection - Vector3.Up * 0.5f));
+                lp.Update(km.ForwardDown(), km.BackwardDown(), km.LeftDown(), km.RightDown(), km.Boost.IsDown(), uDeltaTimeFloat);
 
-                game.camera.SmoothMoveTo(c.position - c.frontDirection * 5
+                game.camera.SmoothRotateTo(Vector3.Normalize(lp.frontDirection - Vector3.Up * 0.5f));
+
+                game.camera.SmoothMoveTo(lp.position - lp.frontDirection * 5
                     + Vector3.Up * 5
-                    - c.rightDirection * c.currentTurnRate * 1.35f);
+                    - lp.rightDirection * lp.currentTurnRate * 1.35f);
 
                 game.camera.Update(uDeltaTimeFloat);
 
             }
             else
             {
+                lp.Update(km.Forward2.IsDown(), km.Backward2.IsDown(), km.Left2.IsDown(), km.Right2.IsDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+
                 game.camera.MoveBy(km.Forward.IsDown(), km.Backward.IsDown(), km.Left.IsDown(), km.Right.IsDown(),
                    keyState.IsKeyDown(Keys.Space), keyState.IsKeyDown(Keys.LeftControl),
                    keyState.IsKeyDown(Keys.LeftShift) ? moveSpeed : moveSpeed * 2, uDeltaTimeFloat);
                 game.camera.RotateBy(mouseDelta);
 
             }
-
+            
+            CarManager.UpdatePlayers();
 
             MapWallCollision();
             FloorMapCollision();
@@ -250,10 +252,11 @@ namespace nix_cars.Components.States
 
             game.spriteBatch.Draw(FlotatingTextureDrawer.target, Vector2.Zero, Color.White);
 
-            var c = CarManager.localPlayer;
-            var cp = c.position;
+            var lp = CarManager.localPlayer;
+            var pos = lp.position;
 
-            var str = $"{FPS}  ";
+            var b = lp.boosting ? "B" : "-";
+            var str = $"{FPS} {(int)lp.speed} {b} {lp.boostTimeRemaining.ToString("F2")}  ";
 
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
 

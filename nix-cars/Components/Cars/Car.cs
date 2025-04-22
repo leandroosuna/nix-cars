@@ -24,7 +24,7 @@ namespace nix_cars.Components.Cars
         public float offsetHeadFrontDir = 2.5f;
         public float offsetHeadRightDir = 0.8f;
         public float offsetHeadUpDir = 0.9f;
-
+        public float wheelRadius = 0.5f;
         public OrientedBoundingBox collider;
         public Vector3 colliderExtents = new Vector3(1.125f, .85f, 2.5f);
         public Vector3 colliderCenterOffset = new Vector3(0, 0.75f, 0);
@@ -66,7 +66,7 @@ namespace nix_cars.Components.Cars
         }
         public abstract void LoadModel();
 
-        public void HandleLights(bool b)
+        public void HandleLights(bool b, bool boosting)
         {
             brakeL.enabled = false;
             brakeR.enabled = false;
@@ -88,6 +88,18 @@ namespace nix_cars.Components.Cars
                     brakeL.color = Vector3.One;
                     brakeL.specularColor = brakeL.color;
                     brakeR.color = Vector3.One;
+                    brakeR.specularColor = brakeR.color;
+                    brakeL.enabled = true;
+                    brakeR.enabled = true;
+                }
+            }
+            else
+            {
+                if(p.speed > 0 && boosting)
+                {
+                    brakeL.color = new Vector3(.5f,0,1);
+                    brakeL.specularColor = brakeL.color;
+                    brakeR.color = new Vector3(.5f, 0, 1);
                     brakeR.specularColor = brakeR.color;
                     brakeL.enabled = true;
                     brakeR.enabled = true;

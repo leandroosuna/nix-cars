@@ -28,22 +28,31 @@ namespace nix_cars.Components.FlotatingTextures
 
         public static void AddText(FlotatingText banner)
         {
-            flotatingTexts.Add(banner);
+            lock(flotatingTexts)
+            {
+                flotatingTexts.Add(banner);
+            }
         }
         public static void RemoveText(FlotatingText banner)
         {
-            flotatingTexts.Remove(banner);
+            lock(flotatingTexts)
+            {
+                flotatingTexts.Remove(banner);
+            }
         }
         public static void Draw()
         {
             effect.Parameters["view"]?.SetValue(game.camera.view);
             effect.Parameters["projection"]?.SetValue(game.camera.projection);
 
-            foreach (var b in flotatingTexts)
+            lock(flotatingTexts)
             {
-                if (b.Changed())
+                foreach (var b in flotatingTexts)
                 {
-                    DrawIntoBannerTex(b);
+                    if (b.Changed())
+                    {
+                        DrawIntoBannerTex(b);
+                    }
                 }
             }
             game.GraphicsDevice.SetRenderTarget(target);

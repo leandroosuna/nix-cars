@@ -11,7 +11,6 @@ namespace nix_cars.Components.States.Input
 {
     public class KeyMappings
     {
-        static NixCars game;
         public Key Enter;
         public Key Escape;
 
@@ -19,6 +18,10 @@ namespace nix_cars.Components.States.Input
         public Key Backward;
         public Key Left;
         public Key Right;
+        public Key Forward2;
+        public Key Backward2;
+        public Key Left2;
+        public Key Right2;
 
         public Key Fire;
         public Key Boost;
@@ -30,37 +33,8 @@ namespace nix_cars.Components.States.Input
 
         public List<Key> MappedKeys;
 
-        //public Key Debug1, Debug2, Debug3, Debug0, Debug7, Debug8, Debug9;
         public Key TAB, CAPS;
 
-        //ClientInputState clientInputState = new ClientInputState();
-        //ClientInputState emptyState = new ClientInputState(false, false, false, false, false, false,false, false, false, false, false, false, false, false);
-
-        //public ClientInputState GetClientState()
-        //{
-        //    clientInputState.Forward = Forward.IsDown();
-        //    clientInputState.Backward = Backward.IsDown();
-        //    clientInputState.Jump = Jump.IsDown();
-        //    clientInputState.Crouch = Crouch.IsDown();
-        //    clientInputState.Left = Left.IsDown();
-        //    clientInputState.Right = Right.IsDown();
-        //    clientInputState.Fire = Fire.IsDown();
-        //    clientInputState.ADS = ADS.IsDown();
-        //    clientInputState.Reload = Reload.IsDown();
-        //    clientInputState.Sprint = Sprint.IsDown();
-        //    clientInputState.Ability1 = Ability1.IsDown();
-        //    clientInputState.Ability2 = Ability2.IsDown();
-        //    clientInputState.Ability3 = Ability3.IsDown();
-        //    clientInputState.Ability4 = Ability4.IsDown();
-
-        //    if(game.camera.isFree)
-        //    {
-        //        emptyState.accDeltaTime = clientInputState.accDeltaTime;
-        //        return emptyState;
-        //    }
-
-        //    return clientInputState;
-        //}
         public Key ConvertKey(Keys key)
         {
             //Keys.F20 = MB1
@@ -89,10 +63,6 @@ namespace nix_cars.Components.States.Input
             {
                 return new ScrollWheel(false);
             }
-            //if(key == Keys.None)
-            //{
-
-            //}
             
             return new KeyboardKey(key);
         }
@@ -100,10 +70,15 @@ namespace nix_cars.Components.States.Input
         {
             Enter = ConvertKey(keys.KeyEnter);
             Escape = ConvertKey(keys.KeyEscape);
+
             Forward = ConvertKey(keys.KeyForward);
             Backward = ConvertKey(keys.KeyBackward);
             Left = ConvertKey(keys.KeyLeft);
             Right = ConvertKey(keys.KeyRight);
+            Forward2 = ConvertKey(keys.KeyForward2);
+            Backward2 = ConvertKey(keys.KeyBackward2);
+            Left2 = ConvertKey(keys.KeyLeft2);
+            Right2 = ConvertKey(keys.KeyRight2);
 
             Fire = ConvertKey(keys.KeyFire);
             Boost = ConvertKey(keys.KeyBoost);
@@ -118,13 +93,21 @@ namespace nix_cars.Components.States.Input
             MappedKeys.AddRange(new List<Key>()
             {
                 Enter, Escape,
-                Forward, Backward, Left, Right, Fire, Boost, 
+                Forward, Backward, Left, Right,
+                Forward2, Backward2, Left2, Right2, Fire, Boost, 
                 Ability1, Ability2, Ability3, Ability4
             });
-            game = NixCars.GameInstance();
-        }
+            
+            
 
-        
+        }
+        public bool ForwardDown() { return Forward.IsDown() || Forward2.IsDown(); }
+        public bool BackwardDown() { return Backward.IsDown() || Backward2.IsDown(); }
+        public bool LeftDown() { return Left.IsDown() || Left2.IsDown(); }
+        public bool RightDown() { return Right.IsDown() || Right2.IsDown(); }
+
+
+
     }
     public class JsonKeys
     {
@@ -134,6 +117,12 @@ namespace nix_cars.Components.States.Input
         public Keys KeyBackward { get; set; }
         public Keys KeyLeft { get; set; }
         public Keys KeyRight { get; set; }
+
+        public Keys KeyForward2 { get; set; }
+        public Keys KeyBackward2 { get; set; }
+        public Keys KeyLeft2 { get; set; }
+        public Keys KeyRight2 { get; set; }
+
         public Keys KeyFire { get; set; }
         public Keys KeyBoost{ get; set; }
         public Keys Ability1 { get; set; }

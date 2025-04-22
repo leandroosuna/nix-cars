@@ -1,14 +1,19 @@
 ﻿{
-    "KeyEnter": "Enter",
-    "KeyEscape": "Escape",
-    "keyForward": "W",
-    "keyLeft": "A",
-    "keyBackward": "S",
-    "keyRight": "D",
-    "KeyFire": "F20",
-    "KeyBoost": "F21",
-    "Ability1": "D1",
-    "Ability2": "D2",
-    "Ability3": "D3",
-    "Ability4": "D4"
+  "KeyEnter": "Enter",
+  "KeyEscape": "Escape",
+  "keyForward": "W",
+  "keyLeft": "A",
+  "keyBackward": "S",
+  "keyRight": "D",
+  "keyForward2": "Up",
+  "keyLeft2": "Left",
+  "keyBackward2": "Down",
+  "keyRight2": "Right",
+
+  "KeyFire": "F20",
+  "KeyBoost": "E",
+  "Ability1": "D1",
+  "Ability2": "D2",
+  "Ability3": "D3",
+  "Ability4": "D4"
 }

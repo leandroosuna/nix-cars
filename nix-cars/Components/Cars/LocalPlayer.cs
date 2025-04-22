@@ -19,7 +19,11 @@ namespace nix_cars.Components.Cars
         public Vector2 frameHorizontalVelocity;
         
         public float acceleration = 30.0f;
-        public float maxSpeed = 100.0f;
+        public float accelerationBoost = 50.0f;
+
+        public float maxSpeed = 80.0f;
+        public float maxSpeedBoost = 110.0f;
+        public float boostTimeRemaining = 5;
         public float brakeForce = 80.0f;
         public float friction = 8.0f;
         public float baseTurnRate = 1.8f;
@@ -27,7 +31,7 @@ namespace nix_cars.Components.Cars
         public float gravity = 20f;
         public float currentGravity;
 
-        public float wheelRadius = 0.5f;        
+                
         public float maxSteeringAngle = MathHelper.PiOver4; 
         
         float turnInput;
@@ -36,7 +40,10 @@ namespace nix_cars.Components.Cars
         float steeringSharpness = 4f;
         float returnSharpness = 8f;
 
-        
+        float wheelYawSharpness = 2f;
+        float wheelYawReturnSharpness = 4f;
+
+
         public float thisFrameHorizontalDistance;
         public float thisFrameVerticalDistance;
 
@@ -50,15 +57,22 @@ namespace nix_cars.Components.Cars
 
             //FlotatingTextureDrawer.AddText(nameBanner);
         }
-
-        public void Update(bool f, bool b, bool l, bool r, float deltaTime)
+        public bool inF, inB, inL, inR, inBoost;
+        public void Update(bool f, bool b, bool l, bool r, bool boost, float deltaTime)
         {
+            inF = f;
+            inB = b;
+            inL = l;
+            inR = r;
+            inBoost = boost;
+
+            HandleBoost(deltaTime);
             Engine(f, b, deltaTime);
             Steering(l, r, deltaTime);
             UpdateCollisionVelocity(deltaTime);
             CalculateNewPosition(deltaTime);
             CalculateWorld();
-            car.HandleLights(b);
+            car.HandleLights(b,boosting);
             car.CalculateLightsPosition();
             car.UpdateCollider();
 
@@ -70,12 +84,42 @@ namespace nix_cars.Components.Cars
 
             //nameBanner.SetRT(mx);
         }
-
+        bool canStartBoosting = true;
+        void HandleBoost(float deltaTime)
+        {
+            if(inBoost && speed > 0 && canStartBoosting)
+            {
+                boostTimeRemaining -= deltaTime;
+                if(boostTimeRemaining >0)
+                {
+                    boosting = true;
+                }
+                else
+                {
+                    boostTimeRemaining = 0;
+                    boosting = false;
+                    canStartBoosting = false;
+                }
+            }
+            else 
+            {
+                boosting = false;
+                if(boostTimeRemaining <= 5f)
+                {
+                    boostTimeRemaining += deltaTime;
+                }
+                else
+                {
+                    canStartBoosting = true;
+                }
+            }
+        }
         void Engine(bool f, bool b, float deltaTime)
         {
             if (f)
             {
-                speed += acceleration * deltaTime;
+
+                speed += (boosting?accelerationBoost : acceleration) * deltaTime;
             }
             else if (b)
             {
@@ -92,12 +136,15 @@ namespace nix_cars.Components.Cars
                     Math.Min(speed + deceleration, 0);
             }
 
-            speed = MathHelper.Clamp(speed, -maxSpeed / 4, maxSpeed);
-            // TODO: remember to add this to enemy update
+            speed = MathHelper.Clamp(speed, -maxSpeed / 4, boosting? maxSpeedBoost : maxSpeed);
+            
+
             float distanceMoved = speed * deltaTime;
-            wheelRotationAngle += distanceMoved / wheelRadius;
+            wheelRotationAngle += distanceMoved / car.wheelRadius;
             wheelRotationAngle = MathHelper.WrapAngle(wheelRotationAngle);
         }
+
+        
         void Steering(bool l, bool r, float deltaTime)
         {
             turnInput = 0;
@@ -117,8 +164,14 @@ namespace nix_cars.Components.Cars
                 targetTurnRate = 0;
             }
 
-            float activeSharpness = (turnInput != 0) ? steeringSharpness : returnSharpness;
-            // TODO: have a fixed turn rate for enemies to simplify
+            
+            float activeSharpness = (turnInput != 0) ? wheelYawSharpness: wheelYawReturnSharpness;
+
+            steeringYaw = float.Lerp(steeringYaw, turnInput * .9F, deltaTime * activeSharpness);
+
+
+            activeSharpness = (turnInput != 0) ? steeringSharpness : returnSharpness;
+           
             currentTurnRate = MathHelper.Lerp(
                 currentTurnRate,
                 targetTurnRate,

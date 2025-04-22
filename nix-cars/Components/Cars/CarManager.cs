@@ -48,11 +48,7 @@ namespace nix_cars.Components.Cars
             //enemyCar.position = new Vector3(200f, 10, -300);
 
         }
-        public static void UpdateLocalPlayer(bool f, bool b, bool l, bool r, float deltaTime)
-        {
-            localPlayer.Update(f, b, l, r, deltaTime);
-        }
-
+       
         public static void UpdatePlayers()
         {
             lock (players)
@@ -88,7 +84,10 @@ namespace nix_cars.Components.Cars
             {
                 var p = new EnemyPlayer(id);
                 p.SetName("noname");
-                players.Add(p);
+                lock(players)
+                {
+                    players.Add(p);
+                }
                 return p;
             }
 

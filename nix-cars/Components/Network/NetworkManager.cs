@@ -110,11 +110,18 @@ namespace nix_cars.Components.Network
         public static void SendData()
         {
             var msg = Message.Create(MessageSendMode.Unreliable, ClientToServer.PlayerData);
-            msg.AddUInt(localPlayer.id);
-            msg.AddVector3(localPlayer.position);
-            msg.AddVector2(localPlayer.horizontalVelocity);
-            msg.AddFloat(localPlayer.yaw);
-            msg.AddFloat(localPlayer.pitch);
+            var lp = localPlayer;
+            msg.AddUInt(lp.id);
+            msg.AddVector3(lp.position);
+            msg.AddFloat(lp.yaw);
+            msg.AddFloat(lp.pitch);
+            msg.AddVector2(lp.horizontalVelocity);
+
+            msg.AddBool(lp.inF);
+            msg.AddBool(lp.inB);
+            msg.AddBool(lp.inL);
+            msg.AddBool(lp.inR);
+            msg.AddBool(lp.inBoost);
 
             Client.Send(msg);
         }

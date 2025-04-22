@@ -65,7 +65,7 @@ namespace nix_cars.Components.Cars
             if (netDataCache.Count < 2)
                 return;
 
-                var renderBehind = 20; // ms TODO: fix TPS dependent
+                var renderBehind = 30; // ms TODO: fix TPS dependent
             var interpolationFactor = 0.05f; // wont be perfect, but good enough
             var now = NetworkManager.GetHighPrecisionTime() - renderBehind;
 
@@ -92,9 +92,26 @@ namespace nix_cars.Components.Cars
                 (float)Math.Asin(2 * (q.W * q.Z - q.Y * q.X))
             );
 
-            currentTurnRate = 0;
+            var target = (newer.r ? -0.9f : 0f) + (newer.l ? 0.9f : 0f);
+            steeringYaw = float.Lerp(steeringYaw, target, interpolationFactor * 0.25f);
+
+
+            var dir = Vector2.Normalize(newer.horizontalVelocity);
+            var y = MathF.Atan2(dir.X, dir.Y);
+
+            speed = newer.horizontalVelocity.Length();
+
+
+            if (Math.Abs(MathHelper.WrapAngle(yaw) - MathHelper.WrapAngle(y)) >= MathHelper.PiOver2)
+                speed = -speed;
+
+            float distanceMoved = speed * 0.003f;
+            wheelRotationAngle += distanceMoved / car.wheelRadius;
+            wheelRotationAngle = MathHelper.WrapAngle(wheelRotationAngle);
+
+
             CalculateWorld();
-            car.HandleLights(false);
+            car.HandleLights(newer.b,newer.boost);
             car.CalculateLightsPosition();
             car.UpdateCollider();
 

@@ -16,10 +16,10 @@ namespace nix_cars.Components.Cars
         public uint id;
         public string name;
         public bool connected;
-        public Vector3 position = new Vector3(232f,15,-323);
+        public Vector3 position = new Vector3(232f,9,-323);
         public float yaw = 0f;
         public float pitch = 0f;
-
+        public float steeringYaw = 0f;
         public Vector3 frontDirection;
         public Vector3 rightDirection;
         public Vector3 upDirection;
@@ -37,10 +37,11 @@ namespace nix_cars.Components.Cars
         public Vector3 frameVelocity;
 
         public float speed;
+        public bool boosting;
 
         public float wheelRotationAngle;
-        
         public float currentTurnRate;
+
 
         public LinkedList<PlayerCache> netDataCache = new LinkedList<PlayerCache>();
         public FlotatingText nameBanner;
@@ -91,9 +92,9 @@ namespace nix_cars.Components.Cars
                 Matrix.CreateFromYawPitchRoll(yaw, pitch, 0) *
                 Matrix.CreateTranslation(position);
 
-            float steeringYaw = currentTurnRate * 0.35f;
-            if (speed < 0)
-                steeringYaw = -steeringYaw;
+            //float steeringYaw = currentTurnRate * 0.35f;
+            //if (speed < 0)
+            //    steeringYaw = -steeringYaw;
 
             float wheelPitch = wheelRotationAngle; 
 

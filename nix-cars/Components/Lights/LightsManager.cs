@@ -87,33 +87,51 @@ namespace nix_cars.Components.Lights
             lightsToDraw.ForEach(l => l.DrawLightGeo());            
         }
         public void Register(LightVolume volume)
-        { 
-            lights.Add(volume);
+        {
+            lock (lights)
+            {
+                lights.Add(volume);
+            }
         }
         public void Register(List<LightVolume> volumes)
         {
-            lights.AddRange(volumes);
+            lock (lights)
+            {
+                lights.AddRange(volumes);
+            }
         }
         public void Register(List<PointLight> points)
         {
-            lights.AddRange(points);
+            lock (lights)
+            {
+                lights.AddRange(points);
+            }
         }
         public void Destroy(LightVolume volume)
         {
-            lights.Remove(volume);
-        }
-        public void Destroy(List<LightVolume> volumes)
-        {
-            foreach (var volume in volumes)
+            lock(lights)
             {
                 lights.Remove(volume);
             }
         }
+        public void Destroy(List<LightVolume> volumes)
+        {
+            lock (lights)
+            {
+                foreach (var volume in volumes)
+                {
+                    lights.Remove(volume);
+                }
+            }
+        }
         public void Destroy(List<PointLight> points)
         {
-            foreach (var p in points)
+            lock (lights)
             {
-                lights.Remove(p);
+                foreach (var p in points)
+                {
+                    lights.Remove(p);
+                }
             }
         }
     }
