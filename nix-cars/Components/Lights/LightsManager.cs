@@ -35,15 +35,18 @@ namespace nix_cars.Components.Lights
         {
             lightsToDraw.Clear();
             
-            foreach (var l in lights)
+            lock(lights)
             {
-                l.Update();
+                foreach (var l in lights)
+                {
+                    l.Update();
 
-                var inView = game.camera.FrustumContains(l.collider);
+                    var inView = game.camera.FrustumContains(l.collider);
 
 
-                if (l.enabled && inView)
-                    lightsToDraw.Add(l);
+                    if (l.enabled && inView)
+                        lightsToDraw.Add(l);
+                }
             }
         }
         public void Draw()

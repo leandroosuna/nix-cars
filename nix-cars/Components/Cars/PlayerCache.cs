@@ -6,9 +6,9 @@ namespace nix_cars.Components.Cars
 {
     public class PlayerCache
     {
+        public long timeStamp; 
         public Vector3 position;
         public float yaw, pitch;
-        public long timeStamp;
         
         public PlayerCache(ref Message message, long now)
         {

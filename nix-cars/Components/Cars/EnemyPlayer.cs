@@ -1,11 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using nix_cars.Components.FlotatingTextures;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
+using nix_cars.Components.Network;
 using SharpDX.Direct2D1.Effects;
+using SharpDX.Direct3D9;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 
 
@@ -14,6 +18,8 @@ namespace nix_cars.Components.Cars
     public class EnemyPlayer : Player
     {
         public Mutex cacheMutex;
+        public bool E = false;
+        public bool readyForRemoval = false;
         public EnemyPlayer(uint id) : base()
         {
             this.id = id;
@@ -22,73 +28,83 @@ namespace nix_cars.Components.Cars
             car.Init(this);
 
         }
+        public void SetName(string name)
+        {
+            this.name = name;
 
+            if (nameBanner != null)
+                FlotatingTextureDrawer.RemoveText(nameBanner);
+
+            nameBanner = new FlotatingText();
+            nameBanner.SetText(name);
+
+            FlotatingTextureDrawer.AddText(nameBanner);
+        }
         public void ChangeCar(Car car)
         {
             this.car = car;
             car.Init(this);
         }
-        
-        public void Update(long now)
+        void SelfDestroy()
         {
+            if(nameBanner != null)
+                FlotatingTextureDrawer.RemoveText(nameBanner);
+            
+            car.DestroyLights();
+            
+            readyForRemoval = true;
+        }
+        public void Update()
+        {
+            E = false;
             if (!connected)
             {
+                SelfDestroy();
                 return;
             }
-            cacheMutex.WaitOne();
             if (netDataCache.Count < 2)
-            {
-                cacheMutex.ReleaseMutex();
                 return;
-            }
-            netDataCache = netDataCache.OrderBy(pc => pc.timeStamp).ToList();
 
-            var framesBehind = 2;
-            long renderTimeStamp = now - 10 * framesBehind;
+                var renderBehind = 20; // ms TODO: fix TPS dependent
+            var interpolationFactor = 0.05f; // wont be perfect, but good enough
+            var now = NetworkManager.GetHighPrecisionTime() - renderBehind;
 
-            if (netDataCache.All(pc => pc.timeStamp <= renderTimeStamp))
+            PlayerCache newer;
+            lock (cacheMutex)
             {
-                cacheMutex.ReleaseMutex();
-                return;
+
+                // drop any frames that are entirely before our render window
+                while (netDataCache.Count > 3 && netDataCache.First.Next.Value.timeStamp <= now)
+                    netDataCache.RemoveFirst();
+
+                newer = netDataCache.First.Next.Value;
+
             }
-            int indexFound = 0;
-            for (int i = 0; i < netDataCache.Count - 1; i++)
-            {
-                var t0 = netDataCache[i].timeStamp;
-                var t1 = netDataCache[i + 1].timeStamp;
 
-                if (t0 <= renderTimeStamp && renderTimeStamp < t1)
-                {
-                    indexFound = i;
-                    var x0 = netDataCache[i].position;
-                    var x1 = netDataCache[i + 1].position;
+            position = Vector3.Lerp(position, newer.position, interpolationFactor);
 
-                    var y0 = netDataCache[i].yaw;
-                    var y1 = netDataCache[i + 1].yaw;
+            var q0 = Quaternion.CreateFromYawPitchRoll(yaw, pitch, 0);
+            var q1 = Quaternion.CreateFromYawPitchRoll(newer.yaw, newer.pitch, 0);
+            var q = Quaternion.Slerp(q0, q1, interpolationFactor);
 
-                    var p0 = netDataCache[i].pitch;
-                    var p1 = netDataCache[i + 1].pitch;
-
-                    position = x0 + (x1 - x0) * (renderTimeStamp - t0) / (t1 - t0);
-
-                    yaw = y0 + (y1 - y0) * (renderTimeStamp - t0) / (t1 - t0);
-                    pitch = p0 + (p1 - p0) * (renderTimeStamp - t0) / (t1 - t0);
-                }
-            }
-            if (netDataCache.Count > 6)
-            { 
-                if(indexFound>=4)
-                    netDataCache.RemoveRange(0, indexFound-4);
-            }
-            cacheMutex.ReleaseMutex();
+            (yaw, pitch) = (
+                (float)Math.Atan2(2 * (q.W * q.Y + q.X * q.Z), 1 - 2 * (q.Y * q.Y + q.Z * q.Z)),
+                (float)Math.Asin(2 * (q.W * q.Z - q.Y * q.X))
+            );
 
             currentTurnRate = 0;
-            //currentTurnRate = 2.5f; //test R
             CalculateWorld();
             car.HandleLights(false);
             car.CalculateLightsPosition();
             car.UpdateCollider();
+
+            var camYaw = NixCars.GameInstance().camera.yaw;
+
+            camYaw = MathHelper.ToRadians(camYaw);
+            var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
+                * Matrix.CreateTranslation(position + Vector3.Up * 3f);
+
+            nameBanner.SetRT(mx);
         }
-        
     }
 }

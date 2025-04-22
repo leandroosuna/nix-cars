@@ -53,13 +53,6 @@ namespace nix_cars.Components.States
         {
             uDeltaTimeDouble = gameTime.ElapsedGameTime.TotalSeconds;
             uDeltaTimeFloat = (float)uDeltaTimeDouble;
-
-            game.basicModelEffect.SetView(game.camera.view);
-            game.basicModelEffect.SetProjection(game.camera.projection);
-            game.deferredEffect.SetView(game.camera.view);
-            game.deferredEffect.SetProjection(game.camera.projection);
-            game.deferredEffect.SetCameraPosition(game.camera.position);
-            
             mouseState = Mouse.GetState();
             if(!camLocked)
                 UpdateMousePositionDelta();
@@ -70,10 +63,18 @@ namespace nix_cars.Components.States
             keysDown.RemoveAll(key => !key.IsDown());
             Key.Update(mouseState, keyState);
 
-            game.lightsManager.Update(uDeltaTimeFloat);
+        }
 
+        public void FinishUpdate()
+        {
+
+            game.basicModelEffect.SetView(game.camera.view);
+            game.basicModelEffect.SetProjection(game.camera.projection);
+            game.deferredEffect.SetView(game.camera.view);
+            game.deferredEffect.SetProjection(game.camera.projection);
+            game.deferredEffect.SetCameraPosition(game.camera.position);
             
-
+            game.lightsManager.Update(uDeltaTimeFloat);
         }
         public virtual void Draw(GameTime gameTime)
         {

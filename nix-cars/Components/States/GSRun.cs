@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using nix_cars.Components.FlotatingTextures;
 using nix_cars.Components.Cars;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
+using nix_cars.Components.Network;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -98,7 +100,7 @@ namespace nix_cars.Components.States
                 keyState.IsKeyDown(Keys.Right), uDeltaTimeFloat);
             var c = CarManager.localPlayer;
 
-            CarManager.UpdatePlayers(game.mainStopwatch.ElapsedMilliseconds);
+            CarManager.UpdatePlayers();
 
             if (!game.camera.isFree)
             {
@@ -135,9 +137,6 @@ namespace nix_cars.Components.States
 
             }
 
-            
-
-
 
             if (mouseState.LeftButton == ButtonState.Released)
             {
@@ -171,7 +170,7 @@ namespace nix_cars.Components.States
             }
 
             
-
+            FinishUpdate();
         }
         
         public override void Draw(GameTime gameTime)
@@ -231,10 +230,13 @@ namespace nix_cars.Components.States
             // TODO: shouldnt this be in final pass?
             //game.hud.DrawMiniMapTarget(dDeltaTimeFloat);
 
+
+            FlotatingTextureDrawer.Draw();
+
             //Final pass
             game.GraphicsDevice.SetRenderTarget(null);
-            game.GraphicsDevice.BlendState = BlendState.Opaque;
-            game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+            game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             game.deferredEffect.SetLightMap(game.lightTarget);
@@ -243,31 +245,20 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetBlurH(game.blurHTarget);
             game.deferredEffect.SetBlurV(game.blurVTarget);
 
-            game.spriteBatch.Begin();
-            //game.spriteBatch.Draw(game.bloomFilterTarget, Vector2.Zero, Color.White);
             game.fullScreenQuad.Draw(game.deferredEffect.effect);
+            game.spriteBatch.Begin();
 
-            //.ToString("F2")
+            game.spriteBatch.Draw(FlotatingTextureDrawer.target, Vector2.Zero, Color.White);
 
             var c = CarManager.localPlayer;
             var cp = c.position;
 
-            //var ce = "null";
+            var str = $"{FPS}  ";
 
-            //if (closeEnough != null)
-            //    ce = closeEnough.Count().ToString();
-            //var cv = closestVertex.X.ToString("F2") + " " +
-            //    closestVertex.Y.ToString("F2") + " " +
-            //    closestVertex.Z.ToString("F2");
-
-            //var cn = closestNormal.X + " " + closestNormal.Y + " " + closestNormal.Z;
-            ;
-            //c.speed.ToString("F2")
-            var str = $"{FPS} SP " ;
-                //$" {triNormal.X.ToString("F2")} {triNormal.Y.ToString("F2")} {triNormal.Z.ToString("F2")}";
-                //$"{CarManager.playerCar.speed.ToString("F2")}";
-                // p {game.camera.pitch.ToString("F2")} y {game.camera.yaw.ToString("F2")}";
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
+
+
+
             game.spriteBatch.End();
 
         }

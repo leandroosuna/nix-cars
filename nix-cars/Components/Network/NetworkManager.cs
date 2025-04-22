@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace nix_cars.Components.Network
 {
@@ -23,8 +24,18 @@ namespace nix_cars.Components.Network
         [DllImport("winmm.dll", SetLastError = true)]
         private static extern uint timeKillEvent(uint uTimerId);
 
+        [DllImport("kernel32.dll")]
+        private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+        [DllImport("kernel32.dll")]
+        private static extern bool QueryPerformanceFrequency(out long lpFrequency);
+
+
         private delegate void TimerCallback(uint id, uint msg, IntPtr user, IntPtr param1, IntPtr param2);
         private static TimerCallback callback;
+        private static long perfFrequency;
+        private static double ticksToMilliseconds;
+
         public static Client Client { get; set; }
         public static uint playerCount = 0;
         static NixCars game;
@@ -42,6 +53,9 @@ namespace nix_cars.Components.Network
         public static void Connect()
         {
             game = NixCars.GameInstance();
+            
+            QueryPerformanceFrequency(out perfFrequency);
+            ticksToMilliseconds = 1000.0 / perfFrequency;
 
             localPlayer = CarManager.localPlayer;
 
@@ -74,7 +88,11 @@ namespace nix_cars.Components.Network
             timerId = timeSetEvent(TargetMS, 0, callback, IntPtr.Zero, 1);
 
         }
-
+        public static long GetHighPrecisionTime()
+        {
+            QueryPerformanceCounter(out long counter);
+            return (long)(counter * ticksToMilliseconds);
+        }
         private static void TimerElapsed(uint id, uint msg, IntPtr user, IntPtr param1, IntPtr param2)
         {
             Client.Update();
@@ -149,9 +167,26 @@ namespace nix_cars.Components.Network
             versionReceived = true;
         }
 
+        [MessageHandler((ushort)ServerToClient.PlayerName)]
+        private static void HandlePlayerName(Message message)
+        {
+            uint count = message.GetUInt();
+            for(uint i = 0; i < count; i++)
+            {
+                var id = message.GetUInt();
+                string name = message.GetString();
+                EnemyPlayer e = (EnemyPlayer)CarManager.GetPlayerFromId(id, true);
+                e.SetName(name);
+
+                //Debug.WriteLine($"{id} set name {name} ");
+            }
+        }
+
         [MessageHandler((ushort)ServerToClient.AllPlayerData)]
         private static void HandleAllPlayerData(Message message)
         {
+            var now = GetHighPrecisionTime(); 
+            
             playerCount = message.GetUInt();
             for(var i = 0; i < playerCount; i++)
             {
@@ -163,12 +198,22 @@ namespace nix_cars.Components.Network
                     var p = (EnemyPlayer) CarManager.GetPlayerFromId(id, true);
                     p.connected = connected;
 
-                    if(connected)
+                    if (connected)
                     {
-                        var cache = new PlayerCache(ref message, game.mainStopwatch.ElapsedMilliseconds);
-                        p.cacheMutex.WaitOne();
-                        p.netDataCache.Add(cache);
-                        p.cacheMutex.ReleaseMutex();
+                        var newNode = new PlayerCache(ref message, now);
+
+                        lock (p.cacheMutex)
+                        {
+                            var node = p.netDataCache.Last;
+                            while (node != null && node.Value.timeStamp > newNode.timeStamp)
+                                node = node.Previous;
+                            if (node == null) p.netDataCache.AddFirst(newNode);
+                            else p.netDataCache.AddAfter(node, newNode);
+
+                            // Keep cache from growing unbounded
+                            while (p.netDataCache.Count > 50)
+                                p.netDataCache.RemoveFirst();
+                        }
                     }
                 }
                 else

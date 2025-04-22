@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Linq;
+using nix_cars.Components.FlotatingTextures;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
 using System;
@@ -37,10 +39,16 @@ namespace nix_cars.Components.Cars
         
         public float thisFrameHorizontalDistance;
         public float thisFrameVerticalDistance;
+
         
         public LocalPlayer(Car car) : base(car )
         {
-            
+            game = NixCars.GameInstance();
+            name = game.CFG["PlayerName"].Value<string>();
+            //nameBanner = new FlotatingText();
+            //nameBanner.SetText(name);
+
+            //FlotatingTextureDrawer.AddText(nameBanner);
         }
 
         public void Update(bool f, bool b, bool l, bool r, float deltaTime)
@@ -53,23 +61,16 @@ namespace nix_cars.Components.Cars
             car.HandleLights(b);
             car.CalculateLightsPosition();
             car.UpdateCollider();
+
+            var camYaw = NixCars.GameInstance().camera.yaw;
+
+            camYaw = MathHelper.ToRadians(camYaw);
+            var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
+                * Matrix.CreateTranslation(position + Vector3.Up * 3f);
+
+            //nameBanner.SetRT(mx);
         }
-        //public void EnemyUpdate(float deltaTime)
-        //{
-        //    UpdateCollisionVelocity(deltaTime);
-        //    velocity = collisionVelocity;
-        //    frameVelocity = (collisionVelocity) * deltaTime;
 
-        //    frameHorizontalVelocity.X = frameVelocity.X;
-        //    frameHorizontalVelocity.Y = frameVelocity.Z;
-
-        //    thisFrameHorizontalDistance = frameHorizontalVelocity.Length();
-        //    thisFrameVerticalDistance = Math.Abs(frameVelocity.Y);
-
-        //    position += frameVelocity;
-
-        //    UpdateBoxCollider();
-        //}
         void Engine(bool f, bool b, float deltaTime)
         {
             if (f)

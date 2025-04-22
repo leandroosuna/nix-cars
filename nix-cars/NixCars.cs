@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json.Linq;
+using nix_cars.Components.FlotatingTextures;
 using nix_cars.Components.Cameras;
 using nix_cars.Components.Cars;
 using nix_cars.Components.Collisions;
@@ -37,6 +38,7 @@ namespace nix_cars
         public FullScreenQuad fullScreenQuad;
         public SpriteBatch spriteBatch;
         public SpriteFont font25;
+        public SpriteFont font15;
 
         public LightsManager lightsManager;
         
@@ -81,7 +83,7 @@ namespace nix_cars
             //SetFPSLimit(CFG["FPSLimit"].Value<int>());
 
             //Graphics.SynchronizeWithVerticalRetrace = CFG["VSync"].Value<bool>();
-            SetFPSLimit(165);
+            SetFPSLimit(CFG["FPSLimit"].Value<int>());
             Graphics.SynchronizeWithVerticalRetrace = false;
             Graphics.ApplyChanges();
 
@@ -116,7 +118,7 @@ namespace nix_cars
 
             camera = new Camera(GraphicsDevice.Viewport.AspectRatio);
             font25 = Content.Load<SpriteFont>(ContentFolderFonts + "unispace/25");
-            
+            font15 = Content.Load<SpriteFont>(ContentFolderFonts + "unispace/15");
             SetupRenderTargets();
             lightsManager = new LightsManager();
 
@@ -128,6 +130,7 @@ namespace nix_cars
 
             mainStopwatch.Start();
             NetworkManager.Connect();
+            FlotatingTextureDrawer.Init();
 
         }
 

@@ -33,7 +33,7 @@ namespace nix_cars.Components.States
 
                 GameStateManager.SwitchTo(State.RUN);
             }
-
+            FinishUpdate();
         }
         public override void Draw(GameTime gameTime)
         {

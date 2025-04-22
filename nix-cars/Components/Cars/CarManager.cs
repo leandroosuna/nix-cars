@@ -53,10 +53,14 @@ namespace nix_cars.Components.Cars
             localPlayer.Update(f, b, l, r, deltaTime);
         }
 
-        public static void UpdatePlayers(long now)
+        public static void UpdatePlayers()
         {
-            foreach (var p in players)
-                p.Update(now);
+            lock (players)
+            {
+                foreach (var p in players)
+                    p.Update();
+                players.RemoveAll(p => p.readyForRemoval);
+            }
         }
         public static void DrawPlayers()
         {
@@ -83,6 +87,7 @@ namespace nix_cars.Components.Cars
             if (createIfNull)
             {
                 var p = new EnemyPlayer(id);
+                p.SetName("noname");
                 players.Add(p);
                 return p;
             }

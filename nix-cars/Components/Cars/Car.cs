@@ -56,14 +56,22 @@ namespace nix_cars.Components.Cars
 
             LoadModel();
         }
+        public void DestroyLights()
+        {
+            var lm = game.lightsManager;
+            lm.Destroy(brakeL);
+            lm.Destroy(brakeR);
+            lm.Destroy(frontL);
+            lm.Destroy(frontR);
+        }
         public abstract void LoadModel();
 
         public void HandleLights(bool b)
         {
             brakeL.enabled = false;
             brakeR.enabled = false;
-            brakeL.color = Vector3.Zero;
-            brakeR.color = Vector3.Zero;
+            brakeL.color = Vector3.UnitX * 0.1f;
+            brakeR.color = Vector3.UnitX * 0.1f;
             if (p.speed <= 0 || b)
             {
                 if (p.speed >= 0)
