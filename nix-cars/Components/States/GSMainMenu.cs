@@ -21,18 +21,16 @@ namespace nix_cars.Components.States
             
             //game.camera.RotateBy(new Vector2(uDeltaTimeFloat, 0));
 
-            
-            if (km.Escape.IsDown() && !keysDown.Contains(km.Escape))
+            if(km.KeyDownOnce(km.Escape))
             {
                 game.Exit();
             }
 
-            if (km.Enter.IsDown() && !keysDown.Contains(km.Enter))
+            if(km.KeyDownOnce(km.Enter))
             {
-                keysDown.Add(km.Enter);
-
                 GameStateManager.SwitchTo(State.RUN);
             }
+            
             FinishUpdate();
         }
         public override void Draw(GameTime gameTime)
@@ -47,8 +45,9 @@ namespace nix_cars.Components.States
             game.spriteBatch.Begin();
             game.spriteBatch.DrawString(game.font25, "Press Enter to start", new Vector2(100, 100), Color.White);
             game.spriteBatch.End();
-            
 
+
+            FinishDraw();
             //gui.Draw(gameTime);
         }
         public override void LostFocus()

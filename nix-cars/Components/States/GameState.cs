@@ -86,6 +86,10 @@ namespace nix_cars.Components.States
 
 
         }
+        public void FinishDraw()
+        {
+            game.Gum.Draw();
+        }
 
 
         public static void InitInput()

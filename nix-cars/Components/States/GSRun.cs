@@ -47,8 +47,8 @@ namespace nix_cars.Components.States
         }
         public override void OnSwitch()
         {
-            game.IsMouseVisible = false;
-            mouseLocked = true; 
+            //game.IsMouseVisible = false;
+            //mouseLocked = true; 
         }
         
         bool mb1Down = false;
@@ -68,36 +68,15 @@ namespace nix_cars.Components.States
             var lp = CarManager.localPlayer;
             base.Update(gameTime);
 
-            if (km.Escape.IsDown() && !keysDown.Contains(km.Escape))
+            if(km.KeyDownOnce(km.Escape))
             {
-                keysDown.Add(km.Escape);
-
                 GameStateManager.SwitchTo(State.MAIN);
             }
 
-            if (km.Enter.IsDown() && !keysDown.Contains(km.Enter))
+            if (km.KeyDownOnce(km.CAPS))
             {
-                keysDown.Add(km.Enter);
-
-                GameStateManager.SwitchTo(State.RUN);
-            }
-
-            if(km.TAB.IsDown() && !keysDown.Contains(km.TAB))
-            {
-                keysDown.Add(km.TAB);
-
                 game.camera.ToggleFree();
-            }
-            if (km.CAPS.IsDown() && !keysDown.Contains(km.CAPS))
-            {
-                keysDown.Add(km.CAPS);
-
-                lp.floatingBoost.SetBoostValue(.8f);
-                lp.floatingBoost.hasChanged = true;
-                //lp.nameTag.SetText("nox");
-            }
-
-
+            }          
 
 
             if (!game.camera.isFree)
@@ -263,6 +242,8 @@ namespace nix_cars.Components.States
 
 
             game.spriteBatch.End();
+
+            FinishDraw();
 
         }
 
@@ -505,15 +486,21 @@ namespace nix_cars.Components.States
             
         }
 
+        bool mouseVisibleSaveState;
+        bool mouseLockedSaveState;
+
         public override void LostFocus()
         {
+            mouseVisibleSaveState = game.IsMouseVisible;
+            mouseLockedSaveState = mouseLocked;
+
             game.IsMouseVisible = true;
             mouseLocked = false;
         }
         public override void Focused()
         {
-            game.IsMouseVisible = false;
-            mouseLocked = true;
+            game.IsMouseVisible = mouseVisibleSaveState;
+            mouseLocked = mouseLockedSaveState;
         }
         void LoadPeachMapTex()
         {

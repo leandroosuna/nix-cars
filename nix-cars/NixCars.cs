@@ -14,6 +14,9 @@ using nix_cars.Components.States;
 using System;
 using System.Diagnostics;
 using System.IO;
+using MonoGameGum;
+using MonoGameGum.GueDeriving;
+using Gum.Wireframe;
 
 namespace nix_cars
 {
@@ -54,6 +57,8 @@ namespace nix_cars
         public Gizmos gizmos;
         public JObject CFG;
         public Stopwatch mainStopwatch = new Stopwatch();
+
+        public GumService Gum => GumService.Default;
         public NixCars()
         {
             
@@ -68,8 +73,8 @@ namespace nix_cars
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
-            screenWidth = 1600;
-            screenHeight = 900;
+            screenWidth = CFG["ScreenWidth"].Value<int>();
+            screenHeight = CFG["ScreenHeight"].Value<int>();
             Graphics.PreferredBackBufferWidth = screenWidth;
             Graphics.PreferredBackBufferHeight = screenHeight;
             int dw = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -102,9 +107,17 @@ namespace nix_cars
 
             };
         }
-
+        GraphicalUiElement s1;
         protected override void Initialize()
         {
+            var gumProyect = Gum.Initialize(this, "GUM/gum.gumx");
+
+            var screen = gumProyect.Screens.Find(item => item.Name == "ScreenStart");
+            s1 = screen.ToGraphicalUiElement();
+            s1.AddToRoot();
+
+
+            //s1.GetGraphicalUiElementByName
             base.Initialize();
         }
 
@@ -141,7 +154,11 @@ namespace nix_cars
             gameState.Update(gameTime);
             
             gizmos.UpdateViewProjection(game.camera.view, game.camera.projection);
-            
+
+
+
+            Gum.Update(this, gameTime, s1);
+
             base.Update(gameTime);
         }
 

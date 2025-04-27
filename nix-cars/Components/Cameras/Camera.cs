@@ -183,12 +183,15 @@ namespace nix_cars.Components.Cameras
                 //frontDirection = CarManager.playerCar.frontDirection;
                 //UpdatePitchYawVectors();
                 //CalculateView();
+                game.gameState.mouseLocked = true;
                 game.IsMouseVisible = false;
                 game.gameState.mouseDelta = Vector2.Zero;
             }
             else
             {
+                game.gameState.mouseLocked = false;
                 game.IsMouseVisible = true;
+
             }
             isFree = !isFree; 
 

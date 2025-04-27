@@ -106,7 +106,15 @@ namespace nix_cars.Components.States.Input
         public bool LeftDown() { return Left.IsDown() || Left2.IsDown(); }
         public bool RightDown() { return Right.IsDown() || Right2.IsDown(); }
 
-
+        public bool KeyDownOnce(Key key)
+        {
+            if(key.IsDown() && !GameState.keysDown.Contains(key))
+            {
+                GameState.keysDown.Add(key);
+                return true;
+            }
+            return false;
+        }
 
     }
     public class JsonKeys
