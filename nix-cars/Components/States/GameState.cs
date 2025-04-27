@@ -17,6 +17,7 @@ namespace nix_cars.Components.States
         public float uDeltaTimeFloat;
         public double dDeltaTimeDouble;
         public float dDeltaTimeFloat;
+        public float uTotalTime;
         public int FPS;
 
         public static List<Key> keysDown = new List<Key>();
@@ -53,6 +54,7 @@ namespace nix_cars.Components.States
         {
             uDeltaTimeDouble = gameTime.ElapsedGameTime.TotalSeconds;
             uDeltaTimeFloat = (float)uDeltaTimeDouble;
+            uTotalTime = (float)gameTime.TotalGameTime.TotalSeconds;
             mouseState = Mouse.GetState();
             if(!camLocked)
                 UpdateMousePositionDelta();

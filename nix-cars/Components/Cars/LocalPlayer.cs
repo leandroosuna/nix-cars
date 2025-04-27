@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
-using nix_cars.Components.FlotatingTextures;
+using nix_cars.Components.FloatingPlanes;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
 using System;
 using System.Threading;
-
 
 namespace nix_cars.Components.Cars
 {
@@ -23,15 +22,16 @@ namespace nix_cars.Components.Cars
 
         public float maxSpeed = 80.0f;
         public float maxSpeedBoost = 110.0f;
-        public float boostTimeRemaining = 5;
+        public float boostTimeMax = 3;
+        public float boostTimeRemaining = 0;
+
         public float brakeForce = 80.0f;
         public float friction = 8.0f;
         public float baseTurnRate = 1.8f;
         public float turnSpeedFactor = .10f;
         public float gravity = 20f;
         public float currentGravity;
-
-                
+ 
         public float maxSteeringAngle = MathHelper.PiOver4; 
         
         float turnInput;
@@ -47,15 +47,19 @@ namespace nix_cars.Components.Cars
         public float thisFrameHorizontalDistance;
         public float thisFrameVerticalDistance;
 
-        
+        public FloatingBoostMeter floatingBoost;
+        public FloatingLightTrail lightTrailL;
         public LocalPlayer(Car car) : base(car )
         {
             game = NixCars.GameInstance();
             name = game.CFG["PlayerName"].Value<string>();
-            //nameBanner = new FlotatingText();
-            //nameBanner.SetText(name);
+            
+            //nameTag = new FloatingText();
+            //nameTag.SetText(name);
 
-            //FlotatingTextureDrawer.AddText(nameBanner);
+            floatingBoost = new FloatingBoostMeter();
+
+            FloatingPlaneDrawer.Add(floatingBoost);
         }
         public bool inF, inB, inL, inR, inBoost;
         public void Update(bool f, bool b, bool l, bool r, bool boost, float deltaTime)
@@ -76,21 +80,39 @@ namespace nix_cars.Components.Cars
             car.CalculateLightsPosition();
             car.UpdateCollider();
 
-            var camYaw = NixCars.GameInstance().camera.yaw;
+            //var camYaw = NixCars.GameInstance().camera.yaw;
 
-            camYaw = MathHelper.ToRadians(camYaw);
-            var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
-                * Matrix.CreateTranslation(position + Vector3.Up * 3f);
+            //camYaw = MathHelper.ToRadians(camYaw);
+            //var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
+            //    * Matrix.CreateTranslation(position + Vector3.Up * 3f);
 
-            //nameBanner.SetRT(mx);
+            //nameTag.SetRT(mx);
+
+            var mx = Matrix.CreateFromYawPitchRoll(yaw, 0f, 0f)
+                * Matrix.CreateTranslation(position + Vector3.Up * 0.25f - frontDirection * 3.5f);
+
+            floatingBoost.SetRT(mx);
+            floatingBoost.SetBoostValue(boostTimeRemaining / boostTimeMax);
+
+
+            
+        }
+
+        public void TP(Vector3 loc)
+        {
+            position = loc;
+            CalculateWorld();
+            car.HandleLights(inB, boosting);
+            car.CalculateLightsPosition();
+            car.UpdateCollider();
         }
         bool canStartBoosting = true;
         void HandleBoost(float deltaTime)
         {
-            if(inBoost && speed > 0 && canStartBoosting)
+            if (inF && inBoost && speed > 0 && canStartBoosting)
             {
                 boostTimeRemaining -= deltaTime;
-                if(boostTimeRemaining >0)
+                if (boostTimeRemaining > 0)
                 {
                     boosting = true;
                 }
@@ -101,16 +123,23 @@ namespace nix_cars.Components.Cars
                     canStartBoosting = false;
                 }
             }
-            else 
+            else
             {
                 boosting = false;
-                if(boostTimeRemaining <= 5f)
+
+                if (boostTimeRemaining >= boostTimeMax / 3)
                 {
-                    boostTimeRemaining += deltaTime;
+                    canStartBoosting = true;
+                }
+
+                if (boostTimeRemaining <= boostTimeMax)
+                {
+                    boostTimeRemaining += deltaTime * 0.5f;
                 }
                 else
                 {
-                    canStartBoosting = true;
+                    boostTimeRemaining = boostTimeMax;
+                    
                 }
             }
         }
@@ -236,7 +265,6 @@ namespace nix_cars.Components.Cars
             thisFrameHorizontalDistance = frameHorizontalVelocity.Length();
             thisFrameVerticalDistance = Math.Abs(frameVelocity.Y);
             
-            //lastFrameDistanceSquared = moveBy.LengthSquared();
             position += frameVelocity;
         }
 

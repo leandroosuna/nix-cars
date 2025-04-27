@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using nix_cars.Components.FlotatingTextures;
+using nix_cars.Components.FloatingPlanes;
 using nix_cars.Components.Cars;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
@@ -88,16 +88,17 @@ namespace nix_cars.Components.States
 
                 game.camera.ToggleFree();
             }
-            //if (km.CAPS.IsDown() && !keysDown.Contains(km.CAPS))
-            //{
-            //    keysDown.Add(km.CAPS);
+            if (km.CAPS.IsDown() && !keysDown.Contains(km.CAPS))
+            {
+                keysDown.Add(km.CAPS);
 
-            //    lp.Collided(new Vector3(10, 0, 10));
-                
-            //}
+                lp.floatingBoost.SetBoostValue(.8f);
+                lp.floatingBoost.hasChanged = true;
+                //lp.nameTag.SetText("nox");
+            }
 
-            
-            
+
+
 
             if (!game.camera.isFree)
             {
@@ -233,7 +234,7 @@ namespace nix_cars.Components.States
             //game.hud.DrawMiniMapTarget(dDeltaTimeFloat);
 
 
-            FlotatingTextureDrawer.Draw();
+            FloatingPlaneDrawer.Draw();
 
             //Final pass
             game.GraphicsDevice.SetRenderTarget(null);
@@ -250,13 +251,12 @@ namespace nix_cars.Components.States
             game.fullScreenQuad.Draw(game.deferredEffect.effect);
             game.spriteBatch.Begin();
 
-            game.spriteBatch.Draw(FlotatingTextureDrawer.target, Vector2.Zero, Color.White);
+            game.spriteBatch.Draw(FloatingPlaneDrawer.target, Vector2.Zero, Color.White);
 
             var lp = CarManager.localPlayer;
             var pos = lp.position;
 
-            var b = lp.boosting ? "B" : "-";
-            var str = $"{FPS} {(int)lp.speed} {b} {lp.boostTimeRemaining.ToString("F2")}  ";
+            var str = $"{FPS} {(int)lp.speed} {(int)pos.X},{(int)pos.Y},{(int)pos.Z}";
 
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
 
@@ -326,12 +326,21 @@ namespace nix_cars.Components.States
 
         void MapWallCollision()
         {
+            float start = game.mainStopwatch.ElapsedMilliseconds;
+
             var pc = CarManager.localPlayer;
             var bc = pc.car.collider;
             foreach (var t in CollisionHelper.mapWallTriangles)
             {
+                float now = game.mainStopwatch.ElapsedMilliseconds;
 
-                if(bc.Intersects(t))
+                if(now >= start + 5)
+                {
+                    pc.TP(new Vector3(232f, 9, -323));
+                    Debug.WriteLine("stuck, teleporting");
+                    break;
+                }
+                if (bc.Intersects(t))
                 {
 
                     var normal = t.GetNormal();

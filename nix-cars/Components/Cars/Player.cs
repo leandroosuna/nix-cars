@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using nix_cars.Components.FlotatingTextures;
+using nix_cars.Components.FloatingPlanes;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
 using System;
@@ -44,7 +44,7 @@ namespace nix_cars.Components.Cars
 
 
         public LinkedList<PlayerCache> netDataCache = new LinkedList<PlayerCache>();
-        public FlotatingText nameBanner;
+        public FloatingText nameTag;
         public NixCars game;
         // TODO: server side.
         //public void Collided(Vector3 velocity) 

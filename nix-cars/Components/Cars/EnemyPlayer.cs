@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using nix_cars.Components.FlotatingTextures;
+using nix_cars.Components.FloatingPlanes;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
 using nix_cars.Components.Network;
@@ -32,13 +32,13 @@ namespace nix_cars.Components.Cars
         {
             this.name = name;
 
-            if (nameBanner != null)
-                FlotatingTextureDrawer.RemoveText(nameBanner);
+            if (nameTag != null)
+                FloatingPlaneDrawer.Remove(nameTag);
 
-            nameBanner = new FlotatingText();
-            nameBanner.SetText(name);
+            nameTag = new FloatingText();
+            nameTag.SetText(name);
 
-            FlotatingTextureDrawer.AddText(nameBanner);
+            FloatingPlaneDrawer.Add(nameTag);
         }
         public void ChangeCar(Car car)
         {
@@ -47,8 +47,8 @@ namespace nix_cars.Components.Cars
         }
         void SelfDestroy()
         {
-            if(nameBanner != null)
-                FlotatingTextureDrawer.RemoveText(nameBanner);
+            if(nameTag != null)
+                FloatingPlaneDrawer.Remove(nameTag);
             
             car.DestroyLights();
             
@@ -121,7 +121,7 @@ namespace nix_cars.Components.Cars
             var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
                 * Matrix.CreateTranslation(position + Vector3.Up * 3f);
 
-            nameBanner.SetRT(mx);
+            nameTag.SetRT(mx);
         }
     }
 }

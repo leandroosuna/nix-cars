@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json.Linq;
-using nix_cars.Components.FlotatingTextures;
+using nix_cars.Components.FloatingPlanes;
 using nix_cars.Components.Cameras;
 using nix_cars.Components.Cars;
 using nix_cars.Components.Collisions;
@@ -130,7 +130,7 @@ namespace nix_cars
 
             mainStopwatch.Start();
             NetworkManager.Connect();
-            FlotatingTextureDrawer.Init();
+            FloatingPlaneDrawer.Init();
 
         }
 
