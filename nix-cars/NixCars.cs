@@ -17,6 +17,7 @@ using System.IO;
 using MonoGameGum;
 using MonoGameGum.GueDeriving;
 using Gum.Wireframe;
+using Gum.DataTypes;
 
 namespace nix_cars
 {
@@ -58,7 +59,9 @@ namespace nix_cars
         public JObject CFG;
         public Stopwatch mainStopwatch = new Stopwatch();
 
-        public GumService Gum => GumService.Default;
+        public static GumService Gum => GumService.Default;
+        public static GumProjectSave GumProject;
+        public static GraphicalUiElement GumRoot;
         public NixCars()
         {
             
@@ -101,21 +104,22 @@ namespace nix_cars
             }
             Exiting += (s, e) => {
 
-                NetworkManager.Client.Disconnect();
+                //NetworkManager.Client.Disconnect();
                 NetworkManager.StopNetThread();
                 mainStopwatch.Stop();
 
             };
         }
-        GraphicalUiElement s1;
+        
         protected override void Initialize()
         {
-            var gumProyect = Gum.Initialize(this, "GUM/gum.gumx");
+            GumProject = Gum.Initialize(this, "GUM/gum.gumx");
 
-            var screen = gumProyect.Screens.Find(item => item.Name == "ScreenStart");
-            s1 = screen.ToGraphicalUiElement();
-            s1.AddToRoot();
+            ScreenSave screen = GumProject.Screens.Find(item => item.Name == "StartMenu");
+            GumRoot = screen.ToGraphicalUiElement();
+            GumRoot.AddToRoot();
 
+            
 
             //s1.GetGraphicalUiElementByName
             base.Initialize();
@@ -142,7 +146,7 @@ namespace nix_cars
             gizmos.LoadContent(GraphicsDevice);
 
             mainStopwatch.Start();
-            NetworkManager.Connect();
+            //NetworkManager.Connect();
             FloatingPlaneDrawer.Init();
 
         }
@@ -157,7 +161,9 @@ namespace nix_cars
 
 
 
-            Gum.Update(this, gameTime, s1);
+            Gum.Update(this, gameTime, GumRoot);
+            
+
 
             base.Update(gameTime);
         }
