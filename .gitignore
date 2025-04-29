@@ -4,7 +4,12 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 #exclude content
-nix-cars/Content
+nix-cars/Content/3D
+nix-cars/Content/bin
+nix-cars/Content/Effects
+nix-cars/Content/Fonts
+nix-cars/Content/obj
+nix-cars/Content/Content.mgcb
 
 # User-specific files
 *.rsuser

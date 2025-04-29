@@ -25,7 +25,12 @@ namespace nix_cars.Components.FloatingPlanes
             target = new RenderTarget2D(game.GraphicsDevice, game.screenWidth, game.screenHeight);
 
         }
+        // TODO: floating boost fix on res change
+        public static void ResolutionChange(int w, int h)
+        {
+            effect.Parameters["screenSize"].SetValue(new Vector2(w,h));
 
+        }
         public static void Add(FloatingPlane plane)
         {
             lock(floatingPlanes)

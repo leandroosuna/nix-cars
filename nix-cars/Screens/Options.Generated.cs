@@ -48,6 +48,10 @@ partial class Options : MonoGameGum.Forms.Controls.FrameworkElement
     public CheckBox NameTags { get; protected set; }
     public CheckBox BoostBar { get; protected set; }
     public Toast ToastError { get; protected set; }
+    public Slider FPSLimit { get; protected set; }
+    public ContainerRuntime FPSContainer { get; protected set; }
+    public Label FPSLimitLabel { get; protected set; }
+    public Label FPSValue { get; protected set; }
 
     public Options(InteractiveGue visual) : base(visual) { }
     public Options()
@@ -73,6 +77,10 @@ partial class Options : MonoGameGum.Forms.Controls.FrameworkElement
         NameTags = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<CheckBox>(this.Visual,"NameTags");
         BoostBar = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<CheckBox>(this.Visual,"BoostBar");
         ToastError = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<Toast>(this.Visual,"ToastError");
+        FPSLimit = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<Slider>(this.Visual,"FPSLimit");
+        FPSContainer = this.Visual?.GetGraphicalUiElementByName("FPSContainer") as ContainerRuntime;
+        FPSLimitLabel = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<Label>(this.Visual,"FPSLimitLabel");
+        FPSValue = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<Label>(this.Visual,"FPSValue");
         CustomInitialize();
     }
     //Not assigning variables because Object Instantiation Type is set to By Name rather than Fully In Code

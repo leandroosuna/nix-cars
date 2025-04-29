@@ -374,7 +374,10 @@ namespace nix_cars.Components.States
                 }
             }
         }
-        
+        public override void OnResolutionChange(int w, int h)
+        {
+            FloatingPlaneDrawer.ResolutionChange(w, h);
+        }
         // TODO: server side.
         //void PlayersCollision()
         //{

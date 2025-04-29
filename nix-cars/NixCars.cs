@@ -18,6 +18,7 @@ using MonoGameGum;
 using MonoGameGum.GueDeriving;
 using Gum.Wireframe;
 using Gum.DataTypes;
+using nix_cars.Components.DisplayHelper;
 
 namespace nix_cars
 {
@@ -62,10 +63,15 @@ namespace nix_cars
         public static GumService Gum => GumService.Default;
         public static GumProjectSave GumProject;
         public static GraphicalUiElement GumRoot;
+        public static int displayWidth;
+        public static int displayHeight;
+        public static int displayHz;
+        public const string appSettingsPath = "app-settings.json";
         public NixCars()
         {
+            displayHz = DisplayHelper.GetCurrentRefreshRate();
             
-            CFG = JObject.Parse(File.ReadAllText("app-settings.json"));
+            CFG = JObject.Parse(File.ReadAllText(appSettingsPath));
 
             Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -76,15 +82,11 @@ namespace nix_cars
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
-            screenWidth = CFG["ScreenWidth"].Value<int>();
-            screenHeight = CFG["ScreenHeight"].Value<int>();
-            Graphics.PreferredBackBufferWidth = screenWidth;
-            Graphics.PreferredBackBufferHeight = screenHeight;
-            int dw = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            int dh = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            var cdm = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            displayWidth = cdm.Width;
+            displayHeight = cdm.Height;
 
-            Window.Position = new Point((dw - screenWidth) / 2, (dh - screenHeight) / 2);
-            screenCenter = new Point(screenWidth / 2 + Window.Position.X, screenHeight / 2 + Window.Position.Y);
+            SetRes(CFG["ScreenWidth"].Value<int>(), CFG["ScreenHeight"].Value<int>());
             IsMouseVisible = false;
 
 
@@ -100,7 +102,7 @@ namespace nix_cars
                 var ri = new Random().NextInt64();
                 CFG["ClientID"] = (uint)ri;
 
-                File.WriteAllText("app-settings.json", CFG.ToString());
+                SaveCFG();
             }
             Exiting += (s, e) => {
 
@@ -230,22 +232,74 @@ namespace nix_cars
             blurVTarget = new RenderTarget2D(GraphicsDevice,
                 (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, surfaceFormat, DepthFormat.Depth24Stencil8);
         }
-        public void SetFPSLimit(float l)
+        public void SetFPSLimit(int l)
         {
-            var fpslim = (int)l;
-            if (fpslim >= 30)
+            if(l == -1)
             {
                 IsFixedTimeStep = true;
-                TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / fpslim);
-                //CFG["FPSLimit"] = fpslim;
+                Graphics.SynchronizeWithVerticalRetrace = true;
+                TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / displayHz);
+                Graphics.ApplyChanges();
+                SaveCFG();
+                return;
+            }
+            else if (l >= 30)
+            {
+                IsFixedTimeStep = true;
+                TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / l);
+                CFG["FPSLimit"] = l;
             }
             else
             {
                 IsFixedTimeStep = false;
-                //CFG["FPSLimit"] = 0;
+
+                CFG["FPSLimit"] = 0;
+                
+            }
+            SaveCFG();
+
+            if (Graphics.SynchronizeWithVerticalRetrace)
+            {
+                Graphics.SynchronizeWithVerticalRetrace = false;
+                Graphics.ApplyChanges();
             }
 
+        }
+        public void ChangeResolution(int width, int height)
+        {
+            gameState.OnResolutionChange(width, height);
+            SetRes(width, height);
+            SetupRenderTargets();
+            
+            
+        }
 
+        void SetRes(int width, int height)
+        {
+            screenWidth = width;
+            screenHeight = height;
+            Graphics.PreferredBackBufferWidth = width;
+            Graphics.PreferredBackBufferHeight = height;
+            Graphics.ApplyChanges();
+            Window.Position = new Point((displayWidth - screenWidth) / 2, (displayHeight - screenHeight) / 2);
+            screenCenter = new Point(screenWidth / 2 + Window.Position.X, screenHeight / 2 + Window.Position.Y);
+
+            if(GumRoot != null)
+            {
+                GraphicalUiElement.CanvasWidth = screenWidth;
+                GraphicalUiElement.CanvasHeight = screenHeight;
+                GumRoot.UpdateLayout();
+                GumRoot.RemoveFromRoot();
+                GumRoot.AddToRoot();
+            }
+        }
+        public void SaveCFG()
+        {
+            File.WriteAllText(appSettingsPath, CFG.ToString());
+        }
+        public static double Map(double value, double low1, double high1, double low2, double high2)
+        {
+            return low2 + ((value - low1) / (high1 - low1)) * (high2 - low2);
         }
     }
 }

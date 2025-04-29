@@ -42,13 +42,14 @@ namespace nix_cars.Components.States
             game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             //game.skybox.Draw(game.camera.view, game.camera.projection, game.camera.position, false);
-            game.spriteBatch.Begin();
-            game.spriteBatch.DrawString(game.font25, "Press Enter to start", new Vector2(100, 100), Color.White);
-            game.spriteBatch.End();
-
+            
 
             FinishDraw();
             //gui.Draw(gameTime);
+        }
+        public override void OnResolutionChange(int w, int h)
+        {
+
         }
         public override void LostFocus()
         {

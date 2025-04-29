@@ -833,6 +833,118 @@
         "ElementType": "Screens",
         "EventType": 7,
         "TimestampUtc": "2025-04-28T19:02:00.726327Z"
+      },
+      {
+        "NewName": "Options.SliderInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-28T22:06:09.056241Z"
+      },
+      {
+        "NewName": "Options.ContainerInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-28T22:08:03.8172121Z"
+      },
+      {
+        "NewName": "Options.FPSLimit",
+        "OldName": "Options.SliderInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:08:55.2443611Z"
+      },
+      {
+        "NewName": "Options.FPS",
+        "OldName": "Options.ContainerInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:09:00.4596682Z"
+      },
+      {
+        "NewName": "Options.FPSContainer",
+        "OldName": "Options.FPS",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:09:05.9315362Z"
+      },
+      {
+        "NewName": "Options.LabelInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-28T22:09:12.7175325Z"
+      },
+      {
+        "NewName": "Options.FPSLimitLabel",
+        "OldName": "Options.LabelInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:09:31.2483736Z"
+      },
+      {
+        "NewName": "Options.FPSLimitLabel1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-28T22:10:57.212644Z"
+      },
+      {
+        "NewName": "Options.FPSLabel",
+        "OldName": "Options.FPSLimitLabel1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:11:06.1793083Z"
+      },
+      {
+        "NewName": "Options.FPSValue",
+        "OldName": "Options.FPSLabel",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:11:35.6820394Z"
+      },
+      {
+        "NewName": "Options.TextBoxInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-28T22:27:00.753354Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Options.Controls/Label FPSValue in Options",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-04-28T22:27:13.3160097Z"
+      },
+      {
+        "NewName": "Options.FPSValue",
+        "OldName": "Options.TextBoxInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T22:27:19.0621845Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "Options.Controls/TextBox FPSValue in Options",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-04-28T23:07:14.0333654Z"
+      },
+      {
+        "NewName": "Options.FPSLimitLabel1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-28T23:07:20.5912051Z"
+      },
+      {
+        "NewName": "Options.FPSValue",
+        "OldName": "Options.FPSLimitLabel1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-28T23:07:25.6413336Z"
       }
     ]
   }

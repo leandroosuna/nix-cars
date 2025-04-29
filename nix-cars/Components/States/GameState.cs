@@ -91,6 +91,7 @@ namespace nix_cars.Components.States
             NixCars.Gum.Draw();
         }
 
+        public abstract void OnResolutionChange(int width, int height);
 
         public static void InitInput()
         {

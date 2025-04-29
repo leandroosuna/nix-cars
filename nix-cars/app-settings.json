@@ -1,15 +1,10 @@
 ﻿{
-  "FontPath": "C:/Windows/Fonts/Unispace bd.ttf",
-  "FontSize": 20,
-
-  "ScreenWidth": 1280,
-  "ScreenHeight": 720,
+  "ScreenWidth": 1366,
+  "ScreenHeight": 768,
   "Fullscreen": false,
   "GraphicsPreset": "ultra",
   "VSync": false,
   "FPSLimit": 400,
-
-  "FOV": 95,
 
   "ServerURL": "nix.dynamic-dns.net",
 
