@@ -234,8 +234,9 @@ namespace nix_cars.Components.States
 
             var lp = CarManager.localPlayer;
             var pos = lp.position;
+            var cpos = game.camera.position;
 
-            var str = $"{FPS} {(int)lp.speed} {(int)pos.X},{(int)pos.Y},{(int)pos.Z}";
+            var str = $"{FPS} ";
 
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
 
@@ -307,20 +308,11 @@ namespace nix_cars.Components.States
 
         void MapWallCollision()
         {
-            float start = game.mainStopwatch.ElapsedMilliseconds;
-
             var pc = CarManager.localPlayer;
             var bc = pc.car.collider;
-            foreach (var t in CollisionHelper.mapWallTriangles)
-            {
-                float now = game.mainStopwatch.ElapsedMilliseconds;
 
-                if(now >= start + 5)
-                {
-                    pc.TP(new Vector3(232f, 9, -323));
-                    Debug.WriteLine("stuck, teleporting");
-                    break;
-                }
+            foreach (var t in CollisionHelper.mapWallTriangles)
+            {                
                 if (bc.Intersects(t))
                 {
 
@@ -331,10 +323,20 @@ namespace nix_cars.Components.States
                     
                     var angleCorrection = 0f;
                     var flatNormal = new Vector2(normal.X, normal.Z);
-                    angleCorrection = 1 - Vector2.Dot(flatNormal, Vector2.Normalize(pc.frameHorizontalVelocity));
+                    
+                    Vector3 newPos;
 
+                    if (pc.frameHorizontalVelocity != Vector2.Zero)
+                    {
+                        angleCorrection = 1 - Vector2.Dot(flatNormal, Vector2.Normalize(pc.frameHorizontalVelocity));
+                        newPos = pc.position + normal * angleCorrection * pc.thisFrameHorizontalDistance * 0.4f;
+                    }
+                    else
+                    {
+                        newPos = pc.position + normal * uDeltaTimeFloat;
+                    }
 
-                    pc.position = pc.position + normal * angleCorrection * pc.thisFrameHorizontalDistance * 0.4f;
+                    pc.position = newPos;
 
                     if (pc.speed > 0)
                         pc.speed -= uDeltaTimeFloat * 40f;
@@ -367,7 +369,6 @@ namespace nix_cars.Components.States
                     {
                         mul = pc.thisFrameHorizontalDistance;
                     }
-
                     pc.position = pc.position + normal * (pc.thisFrameVerticalDistance + mul);
 
                     break;

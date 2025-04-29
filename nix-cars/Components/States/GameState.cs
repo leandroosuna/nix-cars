@@ -78,11 +78,19 @@ namespace nix_cars.Components.States
             
             game.lightsManager.Update(uDeltaTimeFloat);
         }
+        double FPSShowLimiter;
         public virtual void Draw(GameTime gameTime)
         {
             dDeltaTimeDouble = gameTime.ElapsedGameTime.TotalSeconds;
             dDeltaTimeFloat = (float)uDeltaTimeDouble;
-            FPS = (int)(1 / dDeltaTimeDouble);
+
+            FPSShowLimiter += dDeltaTimeDouble;
+
+            if(FPSShowLimiter >= .05f)
+            {
+                FPSShowLimiter = 0;
+                FPS = (int)(1 / dDeltaTimeDouble);
+            }
 
 
         }

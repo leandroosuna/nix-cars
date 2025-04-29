@@ -34,6 +34,7 @@ partial class Options : MonoGameGum.Forms.Controls.FrameworkElement
             return gue;
         });
     }
+    public ColoredRectangleRuntime Background { get; protected set; }
     public ContainerRuntime MainContainer { get; protected set; }
     public TextRuntime Title { get; protected set; }
     public TextRuntime TextInstance { get; protected set; }
@@ -63,6 +64,7 @@ partial class Options : MonoGameGum.Forms.Controls.FrameworkElement
     protected override void ReactToVisualChanged()
     {
         base.ReactToVisualChanged();
+        Background = this.Visual?.GetGraphicalUiElementByName("Background") as ColoredRectangleRuntime;
         MainContainer = this.Visual?.GetGraphicalUiElementByName("MainContainer") as ContainerRuntime;
         Title = this.Visual?.GetGraphicalUiElementByName("Title") as TextRuntime;
         TextInstance = this.Visual?.GetGraphicalUiElementByName("TextInstance") as TextRuntime;

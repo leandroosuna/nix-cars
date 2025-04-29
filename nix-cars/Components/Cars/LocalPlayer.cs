@@ -101,6 +101,11 @@ namespace nix_cars.Components.Cars
         public void TP(Vector3 loc)
         {
             position = loc;
+            yaw = 0;
+            pitch = 0;
+            game.camera.position = position - frontDirection * 5
+                    + Vector3.Up * 5;
+
             CalculateWorld();
             car.HandleLights(inB, boosting);
             car.CalculateLightsPosition();

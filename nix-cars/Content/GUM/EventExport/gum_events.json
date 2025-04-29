@@ -945,6 +945,496 @@
         "ElementType": "Screens",
         "EventType": 7,
         "TimestampUtc": "2025-04-28T23:07:25.6413336Z"
+      },
+      {
+        "NewName": "CarChange",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 0,
+        "TimestampUtc": "2025-04-29T20:04:52.8556298Z"
+      },
+      {
+        "NewName": "CarSelect",
+        "OldName": "CarChange",
+        "ElementType": "Screens",
+        "EventType": 2,
+        "TimestampUtc": "2025-04-29T20:05:04.4626468Z"
+      },
+      {
+        "NewName": "CarSelect.Title",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:06:38.0562097Z"
+      },
+      {
+        "NewName": "CarSelect.ContainerInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:07:10.8423749Z"
+      },
+      {
+        "NewName": "CarSelect.MainContainer",
+        "OldName": "CarSelect.ContainerInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:10:21.9633911Z"
+      },
+      {
+        "NewName": "CarSelect.ButtonStandardInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:10:42.7138372Z"
+      },
+      {
+        "NewName": "CarSelect.ButtonStandardInstance1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:11:28.7570653Z"
+      },
+      {
+        "NewName": "CarSelect.PrevCar",
+        "OldName": "CarSelect.ButtonStandardInstance1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:11:39.2733058Z"
+      },
+      {
+        "NewName": "CarSelect.NextCar",
+        "OldName": "CarSelect.ButtonStandardInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:11:44.392154Z"
+      },
+      {
+        "NewName": "CarSelect.ButtonStandardInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:15:38.2486829Z"
+      },
+      {
+        "NewName": "CarSelect.ButtonStandardInstance1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:15:53.6775602Z"
+      },
+      {
+        "NewName": "CarSelect.Continue",
+        "OldName": "CarSelect.ButtonStandardInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:16:16.1473927Z"
+      },
+      {
+        "NewName": "CarSelect.Return",
+        "OldName": "CarSelect.ButtonStandardInstance1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:16:21.8067073Z"
+      },
+      {
+        "NewName": "CarSelect.Select",
+        "OldName": "CarSelect.Continue",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:16:42.7229813Z"
+      },
+      {
+        "NewName": "CarSelect.ContainerInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:26:53.0473713Z"
+      },
+      {
+        "NewName": "CarSelect.ColorPicker",
+        "OldName": "CarSelect.ContainerInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:27:17.757899Z"
+      },
+      {
+        "NewName": "CarSelect.ColorPicker",
+        "OldName": "CarSelect.ColorPicker",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:27:21.1663502Z"
+      },
+      {
+        "NewName": "CarSelect.ColorPicker1",
+        "OldName": "CarSelect.ColorPicker",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:27:27.2220277Z"
+      },
+      {
+        "NewName": "CarSelect.LabelInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:27:39.1770185Z"
+      },
+      {
+        "NewName": "CarSelect.PickerLabel",
+        "OldName": "CarSelect.LabelInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:27:44.293814Z"
+      },
+      {
+        "NewName": "CarSelect.SliderInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:28:42.5249278Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CarSelect.Controls/Slider SliderInstance in CarSelect",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-04-29T20:28:47.3085619Z"
+      },
+      {
+        "NewName": "CarSelect.ColorPicker2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:28:53.9751703Z"
+      },
+      {
+        "NewName": "CarSelect.PickerLabel1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:28:53.9967125Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CarSelect.Controls/Label PickerLabel1 in CarSelect",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-04-29T20:28:56.9273279Z"
+      },
+      {
+        "NewName": "CarSelect.SliderLabel",
+        "OldName": "CarSelect.ColorPicker2",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:29:06.5461373Z"
+      },
+      {
+        "NewName": "CarSelect.SliderInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:29:16.2248639Z"
+      },
+      {
+        "NewName": "CarSelect.LabelInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:29:22.8637932Z"
+      },
+      {
+        "NewName": "CarSelect.SliderR",
+        "OldName": "CarSelect.SliderInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:29:28.2517041Z"
+      },
+      {
+        "NewName": "CarSelect.R",
+        "OldName": "CarSelect.SliderR",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:29:35.491125Z"
+      },
+      {
+        "NewName": "CarSelect.RVal",
+        "OldName": "CarSelect.LabelInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:29:40.3974157Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel",
+        "OldName": "CarSelect.SliderLabel",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:29:49.459437Z"
+      },
+      {
+        "NewName": "CarSelect.ColoredRectangleInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:31:12.1163619Z"
+      },
+      {
+        "NewName": "CarSelect.SelectedColor",
+        "OldName": "CarSelect.ColoredRectangleInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:31:30.3193288Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:32:08.492659Z"
+      },
+      {
+        "NewName": "CarSelect.R1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:32:08.5302306Z"
+      },
+      {
+        "NewName": "CarSelect.RVal1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:32:08.5622762Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:32:12.593394Z"
+      },
+      {
+        "NewName": "CarSelect.R2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:32:12.6239343Z"
+      },
+      {
+        "NewName": "CarSelect.RVal2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:32:12.658011Z"
+      },
+      {
+        "NewName": "CarSelect.G",
+        "OldName": "CarSelect.R1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:32:28.8187201Z"
+      },
+      {
+        "NewName": "CarSelect.GVal",
+        "OldName": "CarSelect.RVal1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:32:35.5063281Z"
+      },
+      {
+        "NewName": "CarSelect.B",
+        "OldName": "CarSelect.R2",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:32:39.459331Z"
+      },
+      {
+        "NewName": "CarSelect.BVal",
+        "OldName": "CarSelect.RVal2",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T20:32:43.3313912Z"
+      },
+      {
+        "NewName": "CarSelect.ColorPicker2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:24.9430787Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel3",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:24.9861636Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel4",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.0328433Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel5",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.0809311Z"
+      },
+      {
+        "NewName": "CarSelect.PickerLabel1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.1272306Z"
+      },
+      {
+        "NewName": "CarSelect.R1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.1750288Z"
+      },
+      {
+        "NewName": "CarSelect.G1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.2213478Z"
+      },
+      {
+        "NewName": "CarSelect.B1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.2690057Z"
+      },
+      {
+        "NewName": "CarSelect.RVal1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.3160771Z"
+      },
+      {
+        "NewName": "CarSelect.GVal1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.3636311Z"
+      },
+      {
+        "NewName": "CarSelect.BVal1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.4091925Z"
+      },
+      {
+        "NewName": "CarSelect.SelectedColor1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:33:25.4567572Z"
+      },
+      {
+        "NewName": "CarSelect.ColorPicker3",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.561373Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel6",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.6300462Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel7",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.6934808Z"
+      },
+      {
+        "NewName": "CarSelect.SliderWLabel8",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.7563087Z"
+      },
+      {
+        "NewName": "CarSelect.PickerLabel2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.8179319Z"
+      },
+      {
+        "NewName": "CarSelect.R2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.8816055Z"
+      },
+      {
+        "NewName": "CarSelect.G2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:34.9452033Z"
+      },
+      {
+        "NewName": "CarSelect.B2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:35.0050139Z"
+      },
+      {
+        "NewName": "CarSelect.RVal2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:35.0682621Z"
+      },
+      {
+        "NewName": "CarSelect.GVal2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:35.1314818Z"
+      },
+      {
+        "NewName": "CarSelect.BVal2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:35.1927382Z"
+      },
+      {
+        "NewName": "CarSelect.SelectedColor2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T20:34:35.2553379Z"
+      },
+      {
+        "NewName": "Options.ColoredRectangleInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-04-29T22:55:05.6719353Z"
+      },
+      {
+        "NewName": "Options.Background",
+        "OldName": "Options.ColoredRectangleInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-04-29T22:56:20.399165Z"
       }
     ]
   }

@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace nix_cars.Components.Cars
 {
-    public class CarSport : Car
+    public class CarRoadster: Car
     {
         public override void LoadModel()
         {
-            model = CarManager.GetModel("sport");
-            colors = [new Vector3(1,.2f,0), Vector3.One];
+            model = CarManager.GetModel("roadster");
+            
+            colors = [new Vector3(0,0,1), new Vector3(1,1,1), new Vector3(0,0,.5f)]; //body, wheel, interior
         }
         public override void Draw()
         {
@@ -42,23 +43,31 @@ namespace nix_cars.Components.Cars
                         if (mp == 0)
                             e.SetColor(colors[0]);
 
-                        else if (mp == 1)
-                            e.SetColor(new Vector3(.2f));
-                        else if (mp == 2)
+                        else if (mp == 1) //windshield
                             e.SetColor(Color.Gray.ToVector3());
-                        else if (mp == 3)
+                        else if (mp == 2) //back lights
                         {
                             e.SetColor(p.car.brakeL.color);
                             e.SetKD(0f);
                         }
-                        else if (mp == 4)
+                        else if (mp == 3) //front lights
                         {
                             e.SetColor(Color.White.ToVector3());
                             e.SetKD(0f);
                         }
-                        else if (mp == 5)
+                        else if (mp == 4) //exhaust, backlight border, pedals
+                        {
+                            e.SetColor(Color.Gray.ToVector3());
+                            e.SetKD(.9f);
+                        }
+                        else if (mp == 5) //licence
                         {
                             e.SetColor(Color.White.ToVector3());
+                            e.SetKD(0.9f);
+                        }
+                        else if (mp == 6) //interior
+                        {
+                            e.SetColor(colors[2]);
                             e.SetKD(0.9f);
                         }
 

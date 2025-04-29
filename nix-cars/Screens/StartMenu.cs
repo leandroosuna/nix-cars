@@ -56,7 +56,13 @@ partial class StartMenu
         }
         else
         {
-            GameStateManager.SwitchTo(State.RUN);
+
+            ScreenSave screen = NixCars.GumProject.Screens.Find(item => item.Name == "CarSelect");
+            NixCars.GumRoot.RemoveFromRoot();
+            NixCars.GumRoot = screen.ToGraphicalUiElement();
+            NixCars.GumRoot.AddToRoot();
+            GameStateManager.SwitchTo(State.CARSELECT);
+
         }
     }
 }

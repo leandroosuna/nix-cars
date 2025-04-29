@@ -49,7 +49,7 @@ namespace nix_cars.Components.Lights
                 }
             }
         }
-        public void Draw()
+        public void DrawAmbient()
         {
             effect.SetKA(.15f);
             effect.SetKD(.25f);
@@ -59,10 +59,17 @@ namespace nix_cars.Components.Lights
 
             effect.SetTech("ambient_light");
 
-            game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise; 
+            game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             game.fullScreenQuad.Draw(effect.effect);
-
+        }
+        public void Draw()
+        {
+            DrawAmbient();
+            DrawLightVolumes();
+        }
+        public void DrawLightVolumes()
+        {
             game.GraphicsDevice.RasterizerState = RasterizerState.CullClockwise; //remove front side of spheres to be drawn
 
             lightsToDraw.ForEach(l =>
@@ -75,12 +82,10 @@ namespace nix_cars.Components.Lights
                         effect.SetTech("cone_light");
                     if (l is CylinderLight)
                         effect.SetTech("cylinder_light");
-                    
+
                     l.Draw();
                 }
-
             });
-
         }
         public void DrawLightGeo()
         {

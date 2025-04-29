@@ -29,7 +29,7 @@ namespace nix_cars
         public const string ContentFolderSounds = "Sounds/";
         public const string ContentFolderFonts = "Fonts/";
 
-        private GraphicsDeviceManager Graphics;
+        public GraphicsDeviceManager Graphics;
         public Camera camera;
         public static NixCars game;
         public Point screenCenter;
@@ -54,7 +54,7 @@ namespace nix_cars
         public RenderTarget2D blurHTarget;
         public RenderTarget2D blurVTarget;
         public RenderTarget2D lightTarget;
-        public string graphicsPreset;
+        public string lightQuality;
 
         public Gizmos gizmos;
         public JObject CFG;
@@ -78,7 +78,7 @@ namespace nix_cars
             IsMouseVisible = true;
             game = this;
 
-            graphicsPreset = CFG["GraphicsPreset"].Value<string>();
+            lightQuality = CFG["GraphicsPreset"].Value<string>();
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
@@ -95,6 +95,7 @@ namespace nix_cars
             //Graphics.SynchronizeWithVerticalRetrace = CFG["VSync"].Value<bool>();
             SetFPSLimit(CFG["FPSLimit"].Value<int>());
             Graphics.SynchronizeWithVerticalRetrace = false;
+            game.Graphics.HardwareModeSwitch = false;
             Graphics.ApplyChanges();
 
             if (!CFG.ContainsKey("ClientID"))
@@ -141,9 +142,9 @@ namespace nix_cars
             SetupRenderTargets();
             lightsManager = new LightsManager();
 
+            CarManager.Init();
             GameStateManager.Init();
             LightVolume.Init();
-            CarManager.Init();
             gizmos = new Gizmos();
             gizmos.LoadContent(GraphicsDevice);
 
@@ -210,10 +211,10 @@ namespace nix_cars
             var surfaceFormat = SurfaceFormat.HalfVector4;
             var lightResMultiplier = 1f;
 
-            switch (graphicsPreset)
+            switch (lightQuality)
             {
                 case "ultra": surfaceFormat = SurfaceFormat.Vector4; lightResMultiplier = 1f; break;
-                case "high": surfaceFormat = SurfaceFormat.HalfVector4; lightResMultiplier = 1f; break;
+                case "high": surfaceFormat = SurfaceFormat.Vector4; lightResMultiplier = .7f; break;
                 case "medium": surfaceFormat = SurfaceFormat.HalfVector4; lightResMultiplier = 0.5f; break;
                 case "low": surfaceFormat = SurfaceFormat.HalfVector4; lightResMultiplier = 0.25f; break;
             }
@@ -225,12 +226,16 @@ namespace nix_cars
             positionTarget = new RenderTarget2D(GraphicsDevice,
                 screenWidth, screenHeight, false, surfaceFormat, DepthFormat.Depth24Stencil8);
             lightTarget = new RenderTarget2D(GraphicsDevice,
-                (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, surfaceFormat, DepthFormat.Depth24Stencil8);
-            bloomFilterTarget = new RenderTarget2D(GraphicsDevice, screenWidth, screenHeight, false, surfaceFormat, DepthFormat.Depth24Stencil8);
+                (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, 
+                surfaceFormat, DepthFormat.Depth24Stencil8);
+            bloomFilterTarget = new RenderTarget2D(GraphicsDevice, screenWidth, screenHeight, false, 
+                surfaceFormat, DepthFormat.Depth24Stencil8);
             blurHTarget = new RenderTarget2D(GraphicsDevice,
-                (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, surfaceFormat, DepthFormat.Depth24Stencil8);
+                (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, surfaceFormat, 
+                DepthFormat.Depth24Stencil8);
             blurVTarget = new RenderTarget2D(GraphicsDevice,
-                (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, surfaceFormat, DepthFormat.Depth24Stencil8);
+                (int)(screenWidth * lightResMultiplier), (int)(screenHeight * lightResMultiplier), false, surfaceFormat, 
+                DepthFormat.Depth24Stencil8);
         }
         public void SetFPSLimit(int l)
         {
@@ -273,6 +278,14 @@ namespace nix_cars
             
             
         }
+        public void SetFullScreen(bool val)
+        {
+            game.Graphics.IsFullScreen = val;
+            game.Window.IsBorderless = true;
+            game.Graphics.ApplyChanges();
+
+            ReCenterUI();
+        }
 
         void SetRes(int width, int height)
         {
@@ -283,11 +296,23 @@ namespace nix_cars
             Graphics.ApplyChanges();
             Window.Position = new Point((displayWidth - screenWidth) / 2, (displayHeight - screenHeight) / 2);
             screenCenter = new Point(screenWidth / 2 + Window.Position.X, screenHeight / 2 + Window.Position.Y);
-
-            if(GumRoot != null)
+            
+            ReCenterUI();
+        }
+        void ReCenterUI()
+        {
+            if (GumRoot != null)
             {
-                GraphicalUiElement.CanvasWidth = screenWidth;
-                GraphicalUiElement.CanvasHeight = screenHeight;
+                if (Graphics.IsFullScreen)
+                {
+                    GraphicalUiElement.CanvasWidth = displayWidth;
+                    GraphicalUiElement.CanvasHeight = displayHeight;
+                }
+                else
+                {
+                    GraphicalUiElement.CanvasWidth = screenWidth;
+                    GraphicalUiElement.CanvasHeight = screenHeight;
+                }
                 GumRoot.UpdateLayout();
                 GumRoot.RemoveFromRoot();
                 GumRoot.AddToRoot();

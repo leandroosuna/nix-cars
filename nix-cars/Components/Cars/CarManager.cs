@@ -29,19 +29,20 @@ namespace nix_cars.Components.Cars
         public static void Init()
         {
             game = NixCars.GameInstance();
-            carModelNames = new string[] { "sport" };
+            carModelNames = ["sport", "roadster", "hatchback"];
 
             for (int i = 0; i < carModelNames.Length; i++)
             {
                 var name = carModelNames[i];
-                carModels.Add((name, game.Content.Load<Model>(NixCars.ContentFolder3D + "cars\\" + name)));
+                carModels.Add((name, game.Content.Load<Model>(NixCars.ContentFolder3D + "cars/" + name)));
             }
             foreach (var (_,m) in carModels)
                 NixCars.AssignEffectToModel(m, game.basicModelEffect.effect);
 
             // TODO: get type and colors from file.
-            var pc = new CarSport();
-            
+            //var pc = new CarSport();
+            //var pc = new CarRoadster();
+            var pc = new CarHatchback();
             localPlayer = new LocalPlayer(pc);
             
             //enemyCar = new Player(GetModel("sport"), CarType.Sport);

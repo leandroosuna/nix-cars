@@ -13,6 +13,7 @@ namespace nix_cars.Components.States
         static NixCars game;
         public static GSMainMenu mainMenu;
         public static GSRun run;
+        public static GSCarSelect carSelect;
 
         public static bool paused = false;
         static GameState last;
@@ -21,6 +22,7 @@ namespace nix_cars.Components.States
             game = NixCars.GameInstance();
             mainMenu = new GSMainMenu();
             run = new GSRun();
+            carSelect = new GSCarSelect();
 
             SwitchTo(State.MAIN);
         }
@@ -35,6 +37,9 @@ namespace nix_cars.Components.States
                     break;
                 case State.RUN:
                     newState = run;
+                    break;
+                case State.CARSELECT:
+                    newState = carSelect;
                     break;
 
 
@@ -75,6 +80,7 @@ namespace nix_cars.Components.States
         MAIN,
         OPTIONS,
         //INPUTMAP,
+        CARSELECT,
         RUN,
         //PAUSE,
     }

@@ -64,19 +64,42 @@ partial class Options
         QLightsComboBox.ListBoxInstance.AddChild(lbi);
 
         QLightsComboBox.SelectedIndex = 0;
-
+        QLightsComboBox.SelectionChanged += QLightsComboBox_SelectionChanged;
         NameTags.IsChecked = true;
         BoostBar.IsChecked = true;
         Exit.Click += Exit_Click;
 
+        FPSLimit.ValueChanged += FPSLimit_ValueChanged;
+
+        FullScreen.Checked += FullScreen_Checked;
+        FullScreen.Unchecked += FullScreen_Unchecked;
+
+
         var timeout = 2000; //ms
         timer = new System.Timers.Timer(timeout);
         timer.Elapsed += Timer_Elapsed;
-
-        FPSLimit.ValueChanged += FPSLimit_ValueChanged;
     }
-    
-    
+
+    private void QLightsComboBox_SelectionChanged(object arg1, SelectionChangedEventArgs arg2)
+    {
+        switch(QLightsComboBox.SelectedIndex)
+        {
+            case 0: game.lightQuality = "ultra" ;break;
+            case 1: game.lightQuality = "high"; break;
+            case 2: game.lightQuality = "medium"; break;
+            case 3: game.lightQuality = "low"; break;
+        }
+        game.SetupRenderTargets();
+    }
+
+    private void FullScreen_Checked(object sender, EventArgs e)
+    {
+        game.SetFullScreen(true);
+    }
+    private void FullScreen_Unchecked(object sender, EventArgs e)
+    {
+        game.SetFullScreen(false);
+    }
     private void FPSLimit_ValueChanged(object sender, System.EventArgs e)
     {
         var l = FPSLimit.Value;
