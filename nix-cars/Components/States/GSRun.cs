@@ -62,13 +62,13 @@ namespace nix_cars.Components.States
         OrientedBoundingBox obb2;
         bool collided = false;
 
-        
+
         public override void Update(GameTime gameTime)
         {
             var lp = CarManager.localPlayer;
             base.Update(gameTime);
 
-            if(km.KeyDownOnce(km.Escape))
+            if (km.KeyDownOnce(km.Escape))
             {
                 GameStateManager.SwitchTo(State.MAIN);
             }
@@ -76,13 +76,26 @@ namespace nix_cars.Components.States
             if (km.KeyDownOnce(km.CAPS))
             {
                 game.camera.ToggleFree();
-            }          
+            }
 
 
             if (!game.camera.isFree)
             {
                 lp.Update(km.ForwardDown(), km.BackwardDown(), km.LeftDown(), km.RightDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+            }
+            else
+            {
+                lp.Update(km.Forward2.IsDown(), km.Backward2.IsDown(), km.Left2.IsDown(), km.Right2.IsDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+            }
 
+            CarManager.UpdatePlayers();
+
+            MapWallCollision();
+            FloorMapCollision();
+            lp.PostCollisionUpdate();
+
+            if (!game.camera.isFree)
+            {
                 game.camera.SmoothRotateTo(Vector3.Normalize(lp.frontDirection - Vector3.Up * 0.5f));
 
                 game.camera.SmoothMoveTo(lp.position - lp.frontDirection * 5
@@ -90,25 +103,14 @@ namespace nix_cars.Components.States
                     - lp.rightDirection * lp.currentTurnRate * 1.35f);
 
                 game.camera.Update(uDeltaTimeFloat);
-
             }
             else
             {
-                lp.Update(km.Forward2.IsDown(), km.Backward2.IsDown(), km.Left2.IsDown(), km.Right2.IsDown(), km.Boost.IsDown(), uDeltaTimeFloat);
-
                 game.camera.MoveBy(km.Forward.IsDown(), km.Backward.IsDown(), km.Left.IsDown(), km.Right.IsDown(),
                    keyState.IsKeyDown(Keys.Space), keyState.IsKeyDown(Keys.LeftControl),
                    keyState.IsKeyDown(Keys.LeftShift) ? moveSpeed : moveSpeed * 2, uDeltaTimeFloat);
                 game.camera.RotateBy(mouseDelta);
-
             }
-            
-            CarManager.UpdatePlayers();
-
-            MapWallCollision();
-            FloorMapCollision();
-
-            //PlayersCollision();
 
             HighlightClosestVertex();
 
@@ -118,8 +120,6 @@ namespace nix_cars.Components.States
                 mb1Down = true;
 
             }
-
-
             if (mouseState.LeftButton == ButtonState.Released)
             {
                 mb1Down = false;
@@ -169,11 +169,8 @@ namespace nix_cars.Components.States
             game.GraphicsDevice.SetRenderTargets(game.colorTarget, game.normalTarget, game.positionTarget, game.bloomFilterTarget);
             game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            //game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            //game.skybox.Draw(game.camera.view, game.camera.projection, game.camera.position);
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            //DrawPlane();
             DrawMap();
             
             CarManager.DrawPlayers();
@@ -182,9 +179,7 @@ namespace nix_cars.Components.States
 
             var bc = CarManager.localPlayer.car.collider;
             var cubeMx = Matrix.CreateScale(bc.Extents * 2) * bc.Orientation * Matrix.CreateTranslation(bc.Center);
-            //bc = CarManager.enemyCar.boxCollider;
-            //var cubeMx2 = Matrix.CreateScale(bc.Extents * 2) * bc.Orientation * Matrix.CreateTranslation(bc.Center);
-
+            
             if (collided)
             {
                 game.gizmos.DrawCube(cubeMx, Color.Red);
@@ -226,28 +221,22 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetBlurV(game.blurVTarget);
 
             game.fullScreenQuad.Draw(game.deferredEffect.effect);
-            //game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             FloatingPlaneDrawer.DrawPlanes();
             game.spriteBatch.Begin();
-
-            //game.spriteBatch.Draw(FloatingPlaneDrawer.target, Vector2.Zero, Color.White);
 
             var lp = CarManager.localPlayer;
             var pos = lp.position;
             var cpos = game.camera.position;
 
-            var th = triHitID == uint.MaxValue ? "" : $"{triHitID}";
+            //var th = triHitID == uint.MaxValue ? "" : $"{triHitID}";
 
-            var str = $"{FPS} "+ th;
+            var str = $"{FPS} {lp.position.Y}";
 
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
-
-
 
             game.spriteBatch.End();
 
             FinishDraw();
-
         }
 
         void DrawPlane()
@@ -345,39 +334,40 @@ namespace nix_cars.Components.States
                     if (pc.speed < 0)
                         pc.speed += uDeltaTimeFloat * 40f;
 
-                    //break;
                 }
             }
         }
 
-
+        //uint triHitID;
         void FloorMapCollision()
         {
-            var pc = CarManager.localPlayer;
-            var bc = pc.car.collider;
+            var lp = CarManager.localPlayer;
+            var targetDistance = 1f;
+            //triHitID = uint.MaxValue;
             foreach (var t in CollisionHelper.mapFloorTriangles)
             {
-                if (bc.Intersects(t))
+                var hitPos = BoundingVolumesExtensions.IntersectRayWithTriangle(
+                    lp.position + Vector3.Up * targetDistance,
+                    Vector3.Down, t.v[0], t.v[1], t.v[2]);
+                if (hitPos.HasValue)                    
                 {
-                    CheckTriID(t.id);
+                    var hit = hitPos.Value;
+                    //triHitID = t.id;
                     
-                    var normal = t.GetNormal();
-
-                    if (normal.Y < 0)
-                        normal = -normal;
-
-                    var mul = 0f;
-                    if(normal.Y <= .999f)
+                    var newPos = hit + Vector3.Up * 0.2f;
+                    if (lp.position.Y <= newPos.Y + 0.1f)
                     {
-                        mul = pc.thisFrameHorizontalDistance;
+                        CheckTriID(t.id);
+                        lp.position = newPos;
                     }
-                    pc.position = pc.position + normal * (pc.thisFrameVerticalDistance + mul);
-
                     break;
                 }
             }
         }
-        uint []slowGrassIDs = [774, 773, 797, 791, 792, 793, 794, 807, 783, 784];
+
+
+        uint []slowGrassIDs = [772, 773, 774, 775, 776, 777, 780, 797, 781, 
+            782, 783, 784, 791, 792, 793, 794, 795, 799, 804, 805, 807, 808, 784];
         
         void CheckTriID(uint id)
         {
@@ -388,15 +378,15 @@ namespace nix_cars.Components.States
                 CarManager.localPlayer.speed *= 0.5f;
             }
 
-            //if (slowGrassIDs.Any(i => i == id))
-            //{
-            //    if(CarManager.localPlayer.speed >= 10)
-            //    {
-            //        CarManager.localPlayer.speed *= 0.8f;
-            //        Debug.WriteLine(id);
-            //    }
+            if (slowGrassIDs.Any(i => i == id))
+            {
+                if (CarManager.localPlayer.speed >= 10)
+                {
+                    CarManager.localPlayer.speed *= 0.8f;
+                    Debug.WriteLine(id);
+                }
 
-            //}
+            }
 
         }
         public override void OnResolutionChange(int w, int h)
@@ -459,12 +449,12 @@ namespace nix_cars.Components.States
         
         Vector3 closestVertex = Vector3.Zero;
         Vector3 closestNormal= Vector3.Zero;
-        uint triHitID;
+        //uint triHitID;
         void HighlightClosestVertex()
         {
             game.lightsManager.Destroy(testLights);
             testLights.Clear();
-            triHitID = uint.MaxValue;
+            //triHitID = uint.MaxValue;
             var ts = CollisionHelper.mapFloorTriangles.OrderBy(t => Vector3.DistanceSquared(CollisionHelper.Vec3Avg(t), game.camera.position));
             foreach (var t in ts)
             {
@@ -473,7 +463,7 @@ namespace nix_cars.Components.States
                 var hitPos = BoundingVolumesExtensions.IntersectRayWithTriangle(cam.position, cam.frontDirection, t.v[0], t.v[1], t.v[2]);
                 if(hitPos.HasValue)
                 {
-                    triHitID = t.id;
+                    //triHitID = t.id;
                     var val = hitPos.Value;
                     closestVertex = t.v.MinBy(v => Vector3.DistanceSquared(v, val));
 

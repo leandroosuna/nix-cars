@@ -75,8 +75,12 @@ namespace nix_cars.Components.Cars
             Steering(l, r, deltaTime);
             UpdateCollisionVelocity(deltaTime);
             CalculateNewPosition(deltaTime);
-            CalculateWorld();
             car.HandleLights(b,boosting);
+            
+        }
+        public void PostCollisionUpdate()
+        {
+            CalculateWorld();
             car.CalculateLightsPosition();
             car.UpdateCollider();
 
@@ -93,9 +97,6 @@ namespace nix_cars.Components.Cars
 
             floatingBoost.SetRT(mx);
             floatingBoost.SetBoostValue(boostTimeRemaining / boostTimeMax);
-
-
-            
         }
 
         public void TP(Vector3 loc)

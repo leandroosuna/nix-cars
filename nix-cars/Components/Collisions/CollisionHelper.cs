@@ -201,6 +201,8 @@ namespace nix_cars.Components.Collisions
                         if(Math.Abs(Vector3.Dot(triangle.GetNormal(), Vector3.Up)) > .6f)
                         {
                             mapFloorTriangles.Add(triangle);
+                            
+
                         }
                         else
                         {
@@ -209,8 +211,7 @@ namespace nix_cars.Components.Collisions
                     }
                 }
             }
-
-            
+            mapFloorTriangles = mapFloorTriangles.OrderByDescending(t => Vec3Avg(t).Y).ToList();
 
             return boundingSpheres;
         }
