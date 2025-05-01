@@ -110,7 +110,7 @@ namespace nix_cars.Components.States
 
             //PlayersCollision();
 
-            //HighlightClosestVertex();
+            HighlightClosestVertex();
 
             
             if(mouseState.LeftButton == ButtonState.Pressed && !mb1Down)
@@ -209,16 +209,14 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetBloomFilter(game.bloomFilterTarget);
             game.lightsManager.Draw();
 
-            // TODO: shouldnt this be in final pass?
-            //game.hud.DrawMiniMapTarget(dDeltaTimeFloat);
 
-
-            FloatingPlaneDrawer.Draw();
+            FloatingPlaneDrawer.DrawToPlaneTexs();
 
             //Final pass
             game.GraphicsDevice.SetRenderTarget(null);
+            game.GraphicsDevice.Clear(Color.Transparent);
             game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             game.deferredEffect.SetLightMap(game.lightTarget);
@@ -228,15 +226,19 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetBlurV(game.blurVTarget);
 
             game.fullScreenQuad.Draw(game.deferredEffect.effect);
+            //game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            FloatingPlaneDrawer.DrawPlanes();
             game.spriteBatch.Begin();
 
-            game.spriteBatch.Draw(FloatingPlaneDrawer.target, Vector2.Zero, Color.White);
+            //game.spriteBatch.Draw(FloatingPlaneDrawer.target, Vector2.Zero, Color.White);
 
             var lp = CarManager.localPlayer;
             var pos = lp.position;
             var cpos = game.camera.position;
 
-            var str = $"{FPS} ";
+            var th = triHitID == uint.MaxValue ? "" : $"{triHitID}";
+
+            var str = $"{FPS} "+ th;
 
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
 
@@ -355,9 +357,9 @@ namespace nix_cars.Components.States
             var bc = pc.car.collider;
             foreach (var t in CollisionHelper.mapFloorTriangles)
             {
-
                 if (bc.Intersects(t))
                 {
+                    CheckTriID(t.id);
                     
                     var normal = t.GetNormal();
 
@@ -374,6 +376,28 @@ namespace nix_cars.Components.States
                     break;
                 }
             }
+        }
+        uint []slowGrassIDs = [774, 773, 797, 791, 792, 793, 794, 807, 783, 784];
+        
+        void CheckTriID(uint id)
+        {
+
+            if (id >= 34 && id <= 39)
+            {
+                CarManager.localPlayer.Collided(Vector3.Up * 150f);
+                CarManager.localPlayer.speed *= 0.5f;
+            }
+
+            //if (slowGrassIDs.Any(i => i == id))
+            //{
+            //    if(CarManager.localPlayer.speed >= 10)
+            //    {
+            //        CarManager.localPlayer.speed *= 0.8f;
+            //        Debug.WriteLine(id);
+            //    }
+
+            //}
+
         }
         public override void OnResolutionChange(int w, int h)
         {
@@ -435,10 +459,12 @@ namespace nix_cars.Components.States
         
         Vector3 closestVertex = Vector3.Zero;
         Vector3 closestNormal= Vector3.Zero;
+        uint triHitID;
         void HighlightClosestVertex()
         {
             game.lightsManager.Destroy(testLights);
             testLights.Clear();
+            triHitID = uint.MaxValue;
             var ts = CollisionHelper.mapFloorTriangles.OrderBy(t => Vector3.DistanceSquared(CollisionHelper.Vec3Avg(t), game.camera.position));
             foreach (var t in ts)
             {
@@ -447,6 +473,7 @@ namespace nix_cars.Components.States
                 var hitPos = BoundingVolumesExtensions.IntersectRayWithTriangle(cam.position, cam.frontDirection, t.v[0], t.v[1], t.v[2]);
                 if(hitPos.HasValue)
                 {
+                    triHitID = t.id;
                     var val = hitPos.Value;
                     closestVertex = t.v.MinBy(v => Vector3.DistanceSquared(v, val));
 
@@ -514,15 +541,26 @@ namespace nix_cars.Components.States
                 peachMapTex[i] = numTex[i];
             }
             var path = NixCars.ContentFolder3D + "maps/peach/";
+            //TODO: 2,3,17,19
+            peachMapTex[0] = game.Content.Load<Texture2D>(path + "goal");
+            peachMapTex[1] = game.Content.Load<Texture2D>(path + "heri");
             peachMapTex[4] = game.Content.Load<Texture2D>(path + "flower_r");
+            peachMapTex[5] = game.Content.Load<Texture2D>(path + "wall02");
             peachMapTex[6] = game.Content.Load<Texture2D>(path + "waterC");
             peachMapTex[7] = game.Content.Load<Texture2D>(path + "back_yam");
+            peachMapTex[8] = game.Content.Load<Texture2D>(path + "ya");
             peachMapTex[9] = game.Content.Load<Texture2D>(path + "back2");
+            peachMapTex[10] = game.Content.Load<Texture2D>(path + "tree_s");
             peachMapTex[11] = game.Content.Load<Texture2D>(path + "hasi2");
+            peachMapTex[12] = game.Content.Load<Texture2D>(path + "roof");
+            peachMapTex[13] = game.Content.Load<Texture2D>(path + "grass3_2");
             peachMapTex[14] = game.Content.Load<Texture2D>(path + "flower_y");
             peachMapTex[15] = game.Content.Load<Texture2D>(path + "saku");
             peachMapTex[16] = game.Content.Load<Texture2D>(path + "suna");
+            peachMapTex[18] = game.Content.Load<Texture2D>(path + "wall01");
+            peachMapTex[19] = game.Content.Load<Texture2D>(path + "NemuMo5");
             peachMapTex[20] = game.Content.Load<Texture2D>(path + "grass");
+            peachMapTex[21] = game.Content.Load<Texture2D>(path + "win");
             peachMapTex[22] = game.Content.Load<Texture2D>(path + "renga");
             peachMapTex[23] = game.Content.Load<Texture2D>(path + "grass");
             peachMapTex[24] = game.Content.Load<Texture2D>(path + "suna3");

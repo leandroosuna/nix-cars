@@ -53,12 +53,12 @@ namespace nix_cars.Components.Cars
         {
             game = NixCars.GameInstance();
             name = game.CFG["PlayerName"].Value<string>();
-            
-            //nameTag = new FloatingText();
-            //nameTag.SetText(name);
+
+            nameTag = new FloatingText();
+            nameTag.SetText(name);
+            FloatingPlaneDrawer.Add(nameTag);
 
             floatingBoost = new FloatingBoostMeter();
-
             FloatingPlaneDrawer.Add(floatingBoost);
         }
         public bool inF, inB, inL, inR, inBoost;
@@ -80,15 +80,15 @@ namespace nix_cars.Components.Cars
             car.CalculateLightsPosition();
             car.UpdateCollider();
 
-            //var camYaw = NixCars.GameInstance().camera.yaw;
+            var camYaw = NixCars.GameInstance().camera.yaw;
 
-            //camYaw = MathHelper.ToRadians(camYaw);
-            //var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
-            //    * Matrix.CreateTranslation(position + Vector3.Up * 3f);
+            camYaw = MathHelper.ToRadians(camYaw);
+            var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
+                * Matrix.CreateTranslation(position + Vector3.Up * 3f);
 
-            //nameTag.SetRT(mx);
+            nameTag.SetRT(mx);
 
-            var mx = Matrix.CreateFromYawPitchRoll(yaw, 0f, 0f)
+            mx = Matrix.CreateFromYawPitchRoll(yaw, 0f, 0f)
                 * Matrix.CreateTranslation(position + Vector3.Up * 0.25f - frontDirection * 3.5f);
 
             floatingBoost.SetRT(mx);

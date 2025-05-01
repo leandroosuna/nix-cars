@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 
 namespace nix_cars.Components.FloatingPlanes
@@ -12,7 +13,6 @@ namespace nix_cars.Components.FloatingPlanes
         static Model plane;
         static NixCars game;
         static Effect effect;
-        public static RenderTarget2D target;
         public static void Init()
         {
             game = NixCars.GameInstance();
@@ -22,14 +22,10 @@ namespace nix_cars.Components.FloatingPlanes
             effect.Parameters["screenSize"].SetValue(new Vector2(game.screenWidth, game.screenHeight));
 
             NixCars.AssignEffectToModel(plane, effect);
-            target = new RenderTarget2D(game.GraphicsDevice, game.screenWidth, game.screenHeight);
-
         }
-        // TODO: floating boost fix on res change
         public static void ResolutionChange(int w, int h)
         {
             effect.Parameters["screenSize"].SetValue(new Vector2(w,h));
-
         }
         public static void Add(FloatingPlane plane)
         {
@@ -45,7 +41,7 @@ namespace nix_cars.Components.FloatingPlanes
                 floatingPlanes.Remove(plane);
             }
         }
-        public static void Draw()
+        public static void DrawToPlaneTexs()
         {
             effect.Parameters["view"]?.SetValue(game.camera.view);
             effect.Parameters["projection"]?.SetValue(game.camera.projection);
@@ -61,21 +57,19 @@ namespace nix_cars.Components.FloatingPlanes
                     }
                 }
             }
-            game.GraphicsDevice.SetRenderTarget(target);
-            game.GraphicsDevice.Clear(ClearOptions.Target, Color.Transparent, 1f, 0);
-            game.GraphicsDevice.BlendState = BlendState.Additive;
-            game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-
+        }
+        public static void DrawPlanes()
+        {
             lock (floatingPlanes)
             {
                 foreach (var b in floatingPlanes)
                 {
-                    if(b.showThisFrame)
+                    if (b.showThisFrame)
                         DrawFloatingPlane(b);
                 }
             }
         }
+
         static void DrawIntoFloatingPlane(FloatingPlane b)
         {
             game.GraphicsDevice.SetRenderTarget(b.GetTarget());

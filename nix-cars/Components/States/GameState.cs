@@ -96,7 +96,7 @@ namespace nix_cars.Components.States
         }
         public void FinishDraw()
         {
-            NixCars.Gum.Draw();
+           NixCars.Gum.Draw();
         }
 
         public abstract void OnResolutionChange(int width, int height);

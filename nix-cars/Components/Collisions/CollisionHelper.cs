@@ -143,6 +143,7 @@ namespace nix_cars.Components.Collisions
             return bone.Transform * CreateTransform(bone.Parent);
         }
         public static float MapScale = 0.02f;
+        static uint id = 0;
         public static List<BoundingSphere> ExtractMeshPart(ModelMeshPart meshPart, Matrix transform)
         {
             List<BoundingSphere> boundingSpheres = new List<BoundingSphere>();
@@ -182,6 +183,9 @@ namespace nix_cars.Components.Collisions
                         triangle.v[0] *= MapScale;
                         triangle.v[1] *= MapScale;
                         triangle.v[2] *= MapScale;
+
+                        triangle.id = id;
+                        id++;
 
                         var center = (triangle.v[0] + triangle.v[1] + triangle.v[2]) / 3;
                         var d0 = Vector3.DistanceSquared(center, triangle.v[0]);
@@ -225,6 +229,7 @@ namespace nix_cars.Components.Collisions
     public class CollisionTriangle
     {
         public Vector3[] v;
+        public uint id;
         public CollisionTriangle()
         {
             v = new Vector3[3];
