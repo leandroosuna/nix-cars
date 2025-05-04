@@ -1,6 +1,7 @@
 //Code for StartMenu
 using GumRuntime;
 using MonoGameGum.GueDeriving;
+using nix_cars.Components;
 using Gum.Converters;
 using Gum.DataTypes;
 using Gum.Managers;
@@ -10,6 +11,7 @@ using RenderingLibrary.Graphics;
 
 using System.Linq;
 
+namespace nix_cars.Screens;
 partial class StartMenu : MonoGameGum.Forms.Controls.FrameworkElement
 {
     [System.Runtime.CompilerServices.ModuleInitializer]
@@ -42,6 +44,7 @@ partial class StartMenu : MonoGameGum.Forms.Controls.FrameworkElement
     public Label NameBoxLabel { get; protected set; }
     public ContainerRuntime NameBoxContainer { get; protected set; }
     public Toast ToastError { get; protected set; }
+    public TextRuntime Title { get; protected set; }
 
     public StartMenu(InteractiveGue visual) : base(visual) { }
     public StartMenu()
@@ -61,6 +64,7 @@ partial class StartMenu : MonoGameGum.Forms.Controls.FrameworkElement
         NameBoxLabel = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<Label>(this.Visual,"NameBoxLabel");
         NameBoxContainer = this.Visual?.GetGraphicalUiElementByName("NameBoxContainer") as ContainerRuntime;
         ToastError = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<Toast>(this.Visual,"ToastError");
+        Title = this.Visual?.GetGraphicalUiElementByName("Title") as TextRuntime;
         CustomInitialize();
     }
     //Not assigning variables because Object Instantiation Type is set to By Name rather than Fully In Code

@@ -18,7 +18,7 @@ using MonoGameGum;
 using MonoGameGum.GueDeriving;
 using Gum.Wireframe;
 using Gum.DataTypes;
-using nix_cars.Components.DisplayHelper;
+using nix_cars.Components.GUI;
 
 namespace nix_cars
 {
@@ -60,9 +60,6 @@ namespace nix_cars
         public JObject CFG;
         public Stopwatch mainStopwatch = new Stopwatch();
 
-        public static GumService Gum => GumService.Default;
-        public static GumProjectSave GumProject;
-        public static GraphicalUiElement GumRoot;
         public static int displayWidth;
         public static int displayHeight;
         public static int displayHz;
@@ -116,15 +113,8 @@ namespace nix_cars
         
         protected override void Initialize()
         {
-            GumProject = Gum.Initialize(this, "GUM/gum.gumx");
+            GumManager.Init(this);
 
-            ScreenSave screen = GumProject.Screens.Find(item => item.Name == "StartMenu");
-            GumRoot = screen.ToGraphicalUiElement();
-            GumRoot.AddToRoot();
-
-            
-
-            //s1.GetGraphicalUiElementByName
             base.Initialize();
         }
 
@@ -153,7 +143,7 @@ namespace nix_cars
             FloatingPlaneDrawer.Init();
 
         }
-
+        
         protected override void Update(GameTime gameTime)
         {
             CheckGameRegainedFocus();
@@ -163,10 +153,8 @@ namespace nix_cars
             gizmos.UpdateViewProjection(game.camera.view, game.camera.projection);
 
 
-
-            Gum.Update(this, gameTime, GumRoot);
+            GumManager.Update(gameTime);
             
-
 
             base.Update(gameTime);
         }
@@ -174,7 +162,7 @@ namespace nix_cars
         protected override void Draw(GameTime gameTime)
         {
             gameState.Draw(gameTime);
-
+            GumManager.Draw();
             base.Draw(gameTime);
         }
       
@@ -284,7 +272,7 @@ namespace nix_cars
             game.Window.IsBorderless = true;
             game.Graphics.ApplyChanges();
 
-            ReCenterUI();
+            GumManager.ReCenterUI(Graphics.IsFullScreen);
         }
 
         void SetRes(int width, int height)
@@ -297,27 +285,9 @@ namespace nix_cars
             Window.Position = new Point((displayWidth - screenWidth) / 2, (displayHeight - screenHeight) / 2);
             screenCenter = new Point(screenWidth / 2 + Window.Position.X, screenHeight / 2 + Window.Position.Y);
             
-            ReCenterUI();
+            GumManager.ReCenterUI(Graphics.IsFullScreen);
         }
-        void ReCenterUI()
-        {
-            if (GumRoot != null)
-            {
-                if (Graphics.IsFullScreen)
-                {
-                    GraphicalUiElement.CanvasWidth = displayWidth;
-                    GraphicalUiElement.CanvasHeight = displayHeight;
-                }
-                else
-                {
-                    GraphicalUiElement.CanvasWidth = screenWidth;
-                    GraphicalUiElement.CanvasHeight = screenHeight;
-                }
-                GumRoot.UpdateLayout();
-                GumRoot.RemoveFromRoot();
-                GumRoot.AddToRoot();
-            }
-        }
+        
         public void SaveCFG()
         {
             File.WriteAllText(appSettingsPath, CFG.ToString());

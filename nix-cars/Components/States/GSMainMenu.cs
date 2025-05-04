@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using nix_cars.Components.GUI;
+using nix_cars.Screens;
 
 namespace nix_cars.Components.States
 {
@@ -13,6 +15,7 @@ namespace nix_cars.Components.States
         {
             game.IsMouseVisible = true;
             mouseLocked = false;
+            GumManager.SwitchTo(Screen.MAIN);
         }
         
         public override void Update(GameTime gameTime)
@@ -25,12 +28,21 @@ namespace nix_cars.Components.States
             {
                 game.Exit();
             }
-
-            if(km.KeyDownOnce(km.Enter))
+            var s = GumManager.GetStartMenu();
+            if (km.KeyDownOnce(km.Enter))
             {
-                GameStateManager.SwitchTo(State.RUN);
+                if (s.NameBox.Text == "")
+                {
+                    s.ToastError.TextInstance.Text = "Ingresa tu nombre para entrar";
+                    s.ToastError.IsVisible = true;
+                    s.timer.Start();
+                }
+                else
+                {
+                    GameStateManager.SwitchTo(State.CARSELECT);
+                }
             }
-            
+
             FinishUpdate();
         }
         public override void Draw(GameTime gameTime)
@@ -40,12 +52,7 @@ namespace nix_cars.Components.States
             game.GraphicsDevice.SetRenderTarget(null);
             game.GraphicsDevice.Clear(Color.Black);
             game.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-            //game.skybox.Draw(game.camera.view, game.camera.projection, game.camera.position, false);
-            
-
-            FinishDraw();
-            //gui.Draw(gameTime);
+;
         }
         public override void OnResolutionChange(int w, int h)
         {

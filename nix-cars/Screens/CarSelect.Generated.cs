@@ -1,6 +1,7 @@
 //Code for CarSelect
 using GumRuntime;
 using MonoGameGum.GueDeriving;
+using nix_cars.Components;
 using Gum.Converters;
 using Gum.DataTypes;
 using Gum.Managers;
@@ -10,6 +11,7 @@ using RenderingLibrary.Graphics;
 
 using System.Linq;
 
+namespace nix_cars.Screens;
 partial class CarSelect : MonoGameGum.Forms.Controls.FrameworkElement
 {
     [System.Runtime.CompilerServices.ModuleInitializer]

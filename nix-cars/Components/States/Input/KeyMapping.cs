@@ -34,7 +34,8 @@ namespace nix_cars.Components.States.Input
         public List<Key> MappedKeys;
 
         public Key TAB, CAPS;
-
+        public Key Command;
+        
         public Key ConvertKey(Keys key)
         {
             //Keys.F20 = MB1

@@ -6,12 +6,15 @@ using MonoGameGum;
 using MonoGameGum.Forms.Controls;
 using Newtonsoft.Json.Linq;
 using nix_cars;
+using nix_cars.Components.GUI;
+using nix_cars.Components.States;
 using RenderingLibrary.Graphics;
 using SharpDX.Direct3D11;
 using System;
 using System.Diagnostics;
 using System.Linq;
 
+namespace nix_cars.Screens;
 partial class Options
 {
     System.Timers.Timer timer;
@@ -168,9 +171,6 @@ partial class Options
 
     private void Exit_Click(object sender, System.EventArgs e)
     {
-        ScreenSave screen = NixCars.GumProject.Screens.Find(item => item.Name == "StartMenu");
-        NixCars.GumRoot.RemoveFromRoot();
-        NixCars.GumRoot = screen.ToGraphicalUiElement();
-        NixCars.GumRoot.AddToRoot();
+        GameStateManager.SwitchTo(State.MAIN);
     }
 }

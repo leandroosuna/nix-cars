@@ -7,10 +7,17 @@ using RenderingLibrary.Graphics;
 
 using System.Linq;
 
-partial class CarChange
+namespace nix_cars.Screens;
+partial class RaceHud
 {
+    static RaceHud instance;
     partial void CustomInitialize()
     {
-    
+        instance = this;
     }
+    public static RaceHud GetInstance()
+    {
+        return instance;
+    }
+
 }

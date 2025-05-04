@@ -7,10 +7,11 @@ using RenderingLibrary.Graphics;
 
 using System.Linq;
 
+
 partial class Icon
 {
     partial void CustomInitialize()
     {
-    
+        
     }
 }

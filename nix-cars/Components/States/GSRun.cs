@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
+using System.Xml.Serialization;
+
+using nix_cars.Components.GUI;
 
 
 namespace nix_cars.Components.States
@@ -22,7 +26,8 @@ namespace nix_cars.Components.States
         Model map;
         Texture2D[] numTex;
         Texture2D[] peachMapTex;
-
+        Model rocket;
+        Texture2D rocketTex;
         public GSRun() : base()
         {
             plane = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/plane");
@@ -34,8 +39,13 @@ namespace nix_cars.Components.States
             }
             
             LoadPeachMapTex();
+
+            rocket = game.Content.Load<Model>(NixCars.ContentFolder3D + "other/rocket");
+            rocketTex = game.Content.Load<Texture2D>(NixCars.ContentFolder3D + "other/1001_Base_Color");
+
             NixCars.AssignEffectToModel(plane, game.basicModelEffect.effect);
             NixCars.AssignEffectToModel(map, game.basicModelEffect.effect);
+            NixCars.AssignEffectToModel(rocket, game.basicModelEffect.effect);
 
             //playerPosition = game.camera.position;
             game.camera.position = new Vector3(150.8f, 15, -159.1f);
@@ -44,11 +54,18 @@ namespace nix_cars.Components.States
             obb2 = new OrientedBoundingBox(new Vector3(230f, 10, -320) + new Vector3(0, 0.75f, 0), new Vector3(1.125f, .7f, 2.5f));
             obb2.Orientation = Matrix.Identity;
 
+            var sp = LoadPositions("map-spline.xml");
+            //sp.Add(sp[0]);
+            mapSpline = sp.ToArray();
+
+            
         }
         public override void OnSwitch()
         {
             //game.IsMouseVisible = false;
             //mouseLocked = true; 
+
+            GumManager.SwitchTo(Screen.RACEHUD);
         }
         
         bool mb1Down = false;
@@ -62,37 +79,101 @@ namespace nix_cars.Components.States
         OrientedBoundingBox obb2;
         bool collided = false;
 
+        float timerS = 0f;
 
+        bool mappingSpline = false;
+        bool prevMappingSpline = false;
+
+        bool endMapping = false;
+        Vector3[] mapSpline;
+        float secTimer = 0f;
+
+        bool commandMode = false;
         public override void Update(GameTime gameTime)
         {
-            var lp = CarManager.localPlayer;
             base.Update(gameTime);
+            var lp = CarManager.localPlayer;
+
+            secTimer += uDeltaTimeFloat;
 
             if (km.KeyDownOnce(km.Escape))
             {
-                GameStateManager.SwitchTo(State.MAIN);
+                if(GumManager.CurrentScreenIs(Screen.RACEHUD))
+                    GumManager.SwitchTo(Screen.OPTIONS);
+                else
+                    GumManager.SwitchTo(Screen.RACEHUD);
             }
 
             if (km.KeyDownOnce(km.CAPS))
             {
                 game.camera.ToggleFree();
+               
             }
 
-
-            if (!game.camera.isFree)
+            if(km.KeyDownOnce(km.Enter))
             {
-                lp.Update(km.ForwardDown(), km.BackwardDown(), km.LeftDown(), km.RightDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+                commandMode = !commandMode;
+                var rh = GumManager.GetRaceHud();
+                var cb = rh.CommandBox;
+                var svr = rh.ServerResponse;
+                if (commandMode)
+                {
+                    cb.Text = "";
+                    //cb.IsVisible = true;
+                    cb.Visual.Visible = true;
+                    cb.IsFocused = true;
+                    svr.Text = "";
+                    svr.Visible = true;
+                }
+                else
+                {
+                    //cb.IsVisible = true;
+                    cb.Visual.Visible = false;
+                    svr.Visible = false;
+
+                    Debug.WriteLine(cb.Text);
+                }
+            }
+
+            //if(mappingSpline)
+            //{
+            //    if (secTimer >= 1)
+            //    {
+            //        secTimer = 0f;
+            //        positions.Add(lp.position);
+
+            //        var pl = new PointLight(lp.position + Vector3.Up * 1, 3f, Vector3.One, Vector3.One);
+            //        pl.skipDraw = true;
+            //        pl.hasLightGeo = true;
+
+            //        game.lightsManager.Register(pl);
+            //    }
+
+            //}
+
+            if(!commandMode)
+            {
+                if (!game.camera.isFree)
+                {
+
+                    lp.Update(km.ForwardDown() || mappingSpline, km.BackwardDown(), km.LeftDown(), km.RightDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+                }
+                else
+                {
+                    lp.Update(km.Forward2.IsDown(), km.Backward2.IsDown(), km.Left2.IsDown(), km.Right2.IsDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+                }
             }
             else
             {
-                lp.Update(km.Forward2.IsDown(), km.Backward2.IsDown(), km.Left2.IsDown(), km.Right2.IsDown(), km.Boost.IsDown(), uDeltaTimeFloat);
+                lp.Update(false,false,false,false,false, uDeltaTimeFloat);
             }
-
             CarManager.UpdatePlayers();
 
             MapWallCollision();
             FloorMapCollision();
-            lp.PostCollisionUpdate();
+            lp.PostCollisionUpdate(uDeltaTimeFloat);
+            LapProgress();
+
 
             if (!game.camera.isFree)
             {
@@ -106,13 +187,14 @@ namespace nix_cars.Components.States
             }
             else
             {
+                
                 game.camera.MoveBy(km.Forward.IsDown(), km.Backward.IsDown(), km.Left.IsDown(), km.Right.IsDown(),
                    keyState.IsKeyDown(Keys.Space), keyState.IsKeyDown(Keys.LeftControl),
                    keyState.IsKeyDown(Keys.LeftShift) ? moveSpeed : moveSpeed * 2, uDeltaTimeFloat);
                 game.camera.RotateBy(mouseDelta);
             }
 
-            HighlightClosestVertex();
+            //HighlightClosestVertex();
 
             
             if(mouseState.LeftButton == ButtonState.Pressed && !mb1Down)
@@ -150,8 +232,29 @@ namespace nix_cars.Components.States
             {
                 cDown = false;
             }
+            timerS += uDeltaTimeFloat;
+            //var a1 = NixCars.GumRoot.GetGraphicalUiElementByName("HitIndicator") as SpriteRuntime;
+            //if(timerS >= .08f)
+            //{
+            //    timerS = 0;
 
-            
+
+            //    a1.TextureLeft += 32;
+
+            //    if (a1.TextureLeft == 128)
+            //        a1.TextureLeft = 0;
+
+            //}
+            //var screenPos = game.GraphicsDevice.Viewport.Project(lp.position, game.camera.projection, game.camera.view, Matrix.Identity);
+            //a1.X = Math.Clamp(screenPos.X,25,game.screenWidth -25);
+            //a1.Y = Math.Clamp(screenPos.Y, 25, game.screenHeight -25);
+
+
+            //var cb = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<TextBox>(gue, "CommandBox");
+            //var cb = NixCars.GumRoot.GetGraphicalUiElementByName("CommandBox");
+            //var textBox = cb. as TextBox;
+           
+
             FinishUpdate();
         }
         
@@ -167,13 +270,15 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetCameraPosition(game.camera.position);
 
             game.GraphicsDevice.SetRenderTargets(game.colorTarget, game.normalTarget, game.positionTarget, game.bloomFilterTarget);
-            game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             DrawMap();
             
+            //DrawRocket();
             CarManager.DrawPlayers();
+
 
             game.lightsManager.DrawLightGeo();
 
@@ -228,15 +333,14 @@ namespace nix_cars.Components.States
             var pos = lp.position;
             var cpos = game.camera.position;
 
-            //var th = triHitID == uint.MaxValue ? "" : $"{triHitID}";
+            var th = triHitID == uint.MaxValue ? "" : $"{triHitID}";
 
-            var str = $"{FPS} {lp.position.Y}";
+            var str = $"{FPS}";
 
             game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
 
             game.spriteBatch.End();
-
-            FinishDraw();
+            
         }
 
         void DrawPlane()
@@ -295,7 +399,136 @@ namespace nix_cars.Components.States
                 }
             }
         }
-        
+
+        void DrawRocket()
+        {
+            game.basicModelEffect.SetTech("colorTex_lightEn");
+            game.basicModelEffect.SetKA(0.3f);
+            game.basicModelEffect.SetKD(0.9f);
+            game.basicModelEffect.SetKS(0.8f);
+            game.basicModelEffect.SetShininess(30f);
+            game.basicModelEffect.SetColorTexture(rocketTex);
+
+            var lp = CarManager.localPlayer;
+            foreach (var mesh in rocket.Meshes)
+            {
+                var w = mesh.ParentBone.Transform * Matrix.CreateScale(1f) *
+                    Matrix.CreateFromYawPitchRoll(lp.yaw, +MathHelper.PiOver2, 0) * 
+                    Matrix.CreateTranslation(lp.position - lp.frontDirection * 4f + Vector3.Up * 1f);
+                var itw = Matrix.Invert(Matrix.Transpose(w));
+
+                game.basicModelEffect.SetWorld(w);
+                game.basicModelEffect.SetInverseTransposeWorld(itw);
+
+                mesh.Draw();
+            }
+        }
+        float progress;
+
+        int mapSplineCurrentIndex = -1;
+        float progressFrom;
+        float progressTo;
+        void LapProgress()
+        {
+            // TODO: lap count detection
+            var lp = CarManager.localPlayer;
+            var pos = lp.position;
+
+            var mapLength = mapSpline.Length;
+            if(mapSplineCurrentIndex == -1)
+            {
+                float minDistance = float.MaxValue;
+                for(int i = 0; i < mapLength; i++) 
+                {
+                    var d = Vector3.DistanceSquared(pos, mapSpline[i]);
+                    if (d <= minDistance)
+                    {
+                        minDistance = d;
+                        mapSplineCurrentIndex = i;
+                    }
+                }
+            }
+            else
+            {
+                var iN = getSplineIndex(mapSplineCurrentIndex, +1);
+                var iP = getSplineIndex(mapSplineCurrentIndex, -1);
+
+                var d = Vector3.DistanceSquared(pos, mapSpline[mapSplineCurrentIndex]);
+                var dN = Vector3.DistanceSquared(pos, mapSpline[iN]);
+                var dP = Vector3.DistanceSquared(pos, mapSpline[iP]);
+
+                if (dN < d)
+                    mapSplineCurrentIndex = iN;
+                else if(dP < d)
+                    mapSplineCurrentIndex = iP;
+
+
+            }
+            var prevIndex = getSplineIndex(mapSplineCurrentIndex, -1);
+            var nextIndex = getSplineIndex(mapSplineCurrentIndex, +1);
+
+            var prev = mapSpline[prevIndex];
+            var current = mapSpline[mapSplineCurrentIndex];
+            var next = mapSpline[nextIndex];
+
+            var dPrev = Vector3.DistanceSquared(pos, prev);
+            var dNext = Vector3.DistanceSquared(pos, next);
+
+            Vector3 p0 = Vector3.Zero;
+            Vector3 a = Vector3.Zero;
+            //float progressFrom;
+            //float progressTo;
+            float totD;
+
+            if (dPrev < dNext)
+            {
+                p0 = prev;
+                a = current - prev;
+                progressFrom = (float)prevIndex / mapLength;
+                progressTo = (float)mapSplineCurrentIndex / mapLength;
+                 if (nextIndex == mapSplineCurrentIndex)
+                    progressTo = 1;
+                totD = Vector3.DistanceSquared(prev, current);
+            }
+            else
+            {
+                p0 = current;
+                a = next - current;
+                progressFrom = (float)mapSplineCurrentIndex / mapLength;
+                progressTo = (float)nextIndex / mapLength;
+                if (nextIndex == 0)
+                    progressTo = 1;
+                totD = Vector3.DistanceSquared(current, next);
+            }
+
+           
+
+            var p0p = pos - p0;
+
+            var dot = Vector3.Dot(p0p, a);
+
+            var lsq = a.LengthSquared();
+
+            var proj = (dot / lsq) * a + p0;
+
+            float lerpFactor = Vector3.DistanceSquared(p0, proj) / totD;
+            
+            progress = float.Lerp(progressFrom, progressTo, lerpFactor);
+
+        }
+
+        int getSplineIndex(int index, int delta)
+        {
+
+            var ret = index + delta;
+            if (ret > (mapSpline.Length - 1))
+                return ret % mapSpline.Length;
+            if (ret < 0)
+                return ret + mapSpline.Length;
+            
+            return ret;
+        }
+
 
         void MapWallCollision()
         {
@@ -338,12 +571,12 @@ namespace nix_cars.Components.States
             }
         }
 
-        //uint triHitID;
+        uint triHitID;
         void FloorMapCollision()
         {
             var lp = CarManager.localPlayer;
             var targetDistance = 1f;
-            //triHitID = uint.MaxValue;
+            triHitID = uint.MaxValue;
             foreach (var t in CollisionHelper.mapFloorTriangles)
             {
                 var hitPos = BoundingVolumesExtensions.IntersectRayWithTriangle(
@@ -352,7 +585,7 @@ namespace nix_cars.Components.States
                 if (hitPos.HasValue)                    
                 {
                     var hit = hitPos.Value;
-                    //triHitID = t.id;
+                    triHitID = t.id;
                     
                     var newPos = hit + Vector3.Up * 0.2f;
                     if (lp.position.Y <= newPos.Y + 0.1f)
@@ -383,7 +616,6 @@ namespace nix_cars.Components.States
                 if (CarManager.localPlayer.speed >= 10)
                 {
                     CarManager.localPlayer.speed *= 0.8f;
-                    Debug.WriteLine(id);
                 }
 
             }
@@ -557,5 +789,42 @@ namespace nix_cars.Components.States
             peachMapTex[25] = game.Content.Load<Texture2D>(path + "grass3_2");
             peachMapTex[26] = game.Content.Load<Texture2D>(path + "grass4");
         }
+        public void SavePositions(List<Vector3> positions, string filePath)
+        {
+            var serializablePositions = positions.Select(p => new SerializableVector3(p)).ToList();
+            var serializer = new XmlSerializer(typeof(List<SerializableVector3>));
+            using (var writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, serializablePositions);
+            }
+        }
+        public List<Vector3> LoadPositions(string filePath)
+        {
+            var serializer = new XmlSerializer(typeof(List<SerializableVector3>));
+            using (var reader = new StreamReader(filePath))
+            {
+                var serializablePositions = (List<SerializableVector3>)serializer.Deserialize(reader);
+                return serializablePositions.Select(s => s.ToVector3()).ToList();
+            }
+        }
     }
+    [Serializable]
+    public class SerializableVector3
+    {
+        public float X;
+        public float Y;
+        public float Z;
+
+        public SerializableVector3() { }
+
+        public SerializableVector3(Vector3 vector)
+        {
+            X = vector.X;
+            Y = vector.Y;
+            Z = vector.Z;
+        }
+
+        public Vector3 ToVector3() => new Vector3(X, Y, Z);
+    }
+
 }

@@ -30,7 +30,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Background.Height</Name>
-      <Value xsi:type="xsd:float">404</Value>
+      <Value xsi:type="xsd:float">688</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -54,7 +54,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Background.Width</Name>
-      <Value xsi:type="xsd:float">646</Value>
+      <Value xsi:type="xsd:float">661</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -78,7 +78,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Background.Y</Name>
-      <Value xsi:type="xsd:float">-81</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -107,8 +107,14 @@
     </Variable>
     <Variable>
       <Type>float</Type>
+      <Name>BoostBar.Width</Name>
+      <Value xsi:type="xsd:float">144</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
       <Name>BoostBar.X</Name>
-      <Value xsi:type="xsd:float">-167</Value>
+      <Value xsi:type="xsd:float">-232</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -126,7 +132,7 @@
     <Variable>
       <Type>float</Type>
       <Name>BoostBar.Y</Name>
-      <Value xsi:type="xsd:float">5</Value>
+      <Value xsi:type="xsd:float">-27</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -144,7 +150,13 @@
     <Variable>
       <Type>string</Type>
       <Name>Exit.ButtonDisplayText</Name>
-      <Value xsi:type="xsd:string">Atras</Value>
+      <Value xsi:type="xsd:string">Volver al menu</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
+      <Name>Exit.Height</Name>
+      <Value xsi:type="xsd:float">50</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -155,8 +167,14 @@
     </Variable>
     <Variable>
       <Type>float</Type>
+      <Name>Exit.Width</Name>
+      <Value xsi:type="xsd:float">150</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
       <Name>Exit.X</Name>
-      <Value xsi:type="xsd:float">1</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -174,7 +192,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Exit.Y</Name>
-      <Value xsi:type="xsd:float">220</Value>
+      <Value xsi:type="xsd:float">318</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -222,7 +240,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSContainer.X</Name>
-      <Value xsi:type="xsd:float">17</Value>
+      <Value xsi:type="xsd:float">-11</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -240,7 +258,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSContainer.Y</Name>
-      <Value xsi:type="xsd:float">-82</Value>
+      <Value xsi:type="xsd:float">-106</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -276,7 +294,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSLimit.X</Name>
-      <Value xsi:type="xsd:float">24</Value>
+      <Value xsi:type="xsd:float">-14</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -324,7 +342,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSLimitLabel.X</Name>
-      <Value xsi:type="xsd:float">-184</Value>
+      <Value xsi:type="xsd:float">-229</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -342,7 +360,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSLimitLabel.Y</Name>
-      <Value xsi:type="xsd:float">0</Value>
+      <Value xsi:type="xsd:float">-1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -372,7 +390,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSValue.X</Name>
-      <Value xsi:type="xsd:float">254</Value>
+      <Value xsi:type="xsd:float">197</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -390,7 +408,7 @@
     <Variable>
       <Type>float</Type>
       <Name>FPSValue.Y</Name>
-      <Value xsi:type="xsd:float">1</Value>
+      <Value xsi:type="xsd:float">-1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -419,8 +437,14 @@
     </Variable>
     <Variable>
       <Type>float</Type>
+      <Name>FullScreen.Width</Name>
+      <Value xsi:type="xsd:float">154</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
       <Name>FullScreen.X</Name>
-      <Value xsi:type="xsd:float">330</Value>
+      <Value xsi:type="xsd:float">354</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -503,8 +527,14 @@
     </Variable>
     <Variable>
       <Type>float</Type>
+      <Name>NameTags.Width</Name>
+      <Value xsi:type="xsd:float">140</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>float</Type>
       <Name>NameTags.X</Name>
-      <Value xsi:type="xsd:float">-167</Value>
+      <Value xsi:type="xsd:float">-234</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -522,7 +552,7 @@
     <Variable>
       <Type>float</Type>
       <Name>NameTags.Y</Name>
-      <Value xsi:type="xsd:float">-36</Value>
+      <Value xsi:type="xsd:float">-64</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -570,7 +600,7 @@
     <Variable>
       <Type>float</Type>
       <Name>QLights.X</Name>
-      <Value xsi:type="xsd:float">-65</Value>
+      <Value xsi:type="xsd:float">-138</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -588,7 +618,7 @@
     <Variable>
       <Type>float</Type>
       <Name>QLights.Y</Name>
-      <Value xsi:type="xsd:float">-119</Value>
+      <Value xsi:type="xsd:float">-145</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -732,7 +762,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Res.X</Name>
-      <Value xsi:type="xsd:float">0</Value>
+      <Value xsi:type="xsd:float">-72</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -750,7 +780,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Res.Y</Name>
-      <Value xsi:type="xsd:float">-152</Value>
+      <Value xsi:type="xsd:float">-184</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -786,7 +816,7 @@
     <Variable>
       <Type>float</Type>
       <Name>ResComboBox.X</Name>
-      <Value xsi:type="xsd:float">1</Value>
+      <Value xsi:type="xsd:float">0</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -874,6 +904,12 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <Type>int</Type>
+      <Name>TextInstance.OutlineThickness</Name>
+      <Value xsi:type="xsd:int">1</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>string</Type>
       <Name>TextInstance.Parent</Name>
       <Value xsi:type="xsd:string">MainContainer</Value>
@@ -888,7 +924,7 @@
     <Variable>
       <Type>float</Type>
       <Name>TextInstance.X</Name>
-      <Value xsi:type="xsd:float">-157</Value>
+      <Value xsi:type="xsd:float">-278</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -906,7 +942,7 @@
     <Variable>
       <Type>float</Type>
       <Name>TextInstance.Y</Name>
-      <Value xsi:type="xsd:float">-199</Value>
+      <Value xsi:type="xsd:float">-217</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -924,7 +960,13 @@
     <Variable>
       <Type>int</Type>
       <Name>Title.FontSize</Name>
-      <Value xsi:type="xsd:int">30</Value>
+      <Value xsi:type="xsd:int">40</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>int</Type>
+      <Name>Title.OutlineThickness</Name>
+      <Value xsi:type="xsd:int">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -959,7 +1001,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Title.Y</Name>
-      <Value xsi:type="xsd:float">-243</Value>
+      <Value xsi:type="xsd:float">-319</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>

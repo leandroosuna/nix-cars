@@ -94,11 +94,8 @@ namespace nix_cars.Components.States
 
 
         }
-        public void FinishDraw()
-        {
-           NixCars.Gum.Draw();
-        }
-
+        
+       
         public abstract void OnResolutionChange(int width, int height);
 
         public static void InitInput()
@@ -106,15 +103,10 @@ namespace nix_cars.Components.States
             var fileCfg = "input-settings.json";
             var jsonKeys = JsonKeys.LoadFromJson(fileCfg);
             km = new KeyMappings(jsonKeys);
-            //keyMappings.Debug0 = new KeyboardKey(Keys.D0);
-            //keyMappings.Debug1 = new KeyboardKey(Keys.D1);
-            //keyMappings.Debug2 = new KeyboardKey(Keys.D2);
-            //keyMappings.Debug3 = new KeyboardKey(Keys.D3);
-            //keyMappings.Debug7 = new KeyboardKey(Keys.D7);
-            //keyMappings.Debug8 = new KeyboardKey(Keys.D8);
-            //keyMappings.Debug9 = new KeyboardKey(Keys.D9);
+
             km.TAB = new KeyboardKey(Keys.Tab);
             km.CAPS = new KeyboardKey(Keys.CapsLock);
+            km.Command = new KeyboardKey(Keys.RightShift);
         }
 
         

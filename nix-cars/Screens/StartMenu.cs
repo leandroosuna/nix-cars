@@ -4,17 +4,21 @@ using Gum.Managers;
 using Gum.Wireframe;
 using MonoGameGum;
 using nix_cars;
+using nix_cars.Components.GUI;
 using nix_cars.Components.States;
 using RenderingLibrary.Graphics;
 
 using System.Linq;
 
+namespace nix_cars.Screens;
 partial class StartMenu
 {
     NixCars game;
-    System.Timers.Timer timer;
+    public System.Timers.Timer timer;
+    static StartMenu instance;
     partial void CustomInitialize()
     {
+        instance = this;
         game = NixCars.GameInstance();
         Start.Click += Start_Click;
         Options.Click += Options_Click;
@@ -23,6 +27,8 @@ partial class StartMenu
         var timeout = 2000; //ms
         timer = new System.Timers.Timer(timeout);
         timer.Elapsed += Timer_Elapsed;
+
+        NameBox.IsFocused = true;
     }
 
     private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -38,12 +44,7 @@ partial class StartMenu
 
     private void Options_Click(object sender, System.EventArgs e)
     {
-
-        ScreenSave screen = NixCars.GumProject.Screens.Find(item => item.Name == "Options");
-        NixCars.GumRoot.RemoveFromRoot();
-        NixCars.GumRoot = screen.ToGraphicalUiElement();
-        NixCars.GumRoot.AddToRoot();
-
+        GumManager.SwitchTo(Screen.OPTIONS);
     }
 
     private void Start_Click(object sender, System.EventArgs e)
@@ -56,13 +57,12 @@ partial class StartMenu
         }
         else
         {
-
-            ScreenSave screen = NixCars.GumProject.Screens.Find(item => item.Name == "CarSelect");
-            NixCars.GumRoot.RemoveFromRoot();
-            NixCars.GumRoot = screen.ToGraphicalUiElement();
-            NixCars.GumRoot.AddToRoot();
             GameStateManager.SwitchTo(State.CARSELECT);
-
         }
+    }
+
+    public static StartMenu GetInstance()
+    {
+        return instance;
     }
 }

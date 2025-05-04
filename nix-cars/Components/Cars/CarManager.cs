@@ -29,7 +29,7 @@ namespace nix_cars.Components.Cars
         public static void Init()
         {
             game = NixCars.GameInstance();
-            carModelNames = ["sport", "roadster", "hatchback"];
+            carModelNames = ["sport", "roadster", "hatchback", "f1", "muscle"];
 
             for (int i = 0; i < carModelNames.Length; i++)
             {
@@ -42,7 +42,9 @@ namespace nix_cars.Components.Cars
             // TODO: get type and colors from file.
             //var pc = new CarSport();
             //var pc = new CarRoadster();
-            var pc = new CarHatchback();
+            //var pc = new CarHatchback();
+            //var pc = new CarF1();
+            var pc = new CarMuscle();
             localPlayer = new LocalPlayer(pc);
             
             //enemyCar = new Player(GetModel("sport"), CarType.Sport);

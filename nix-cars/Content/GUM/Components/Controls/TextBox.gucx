@@ -226,6 +226,19 @@
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
+      <IsFont>true</IsFont>
+      <Type>string</Type>
+      <Name>PlaceholderTextInstance.Font</Name>
+      <Value xsi:type="xsd:string">Unispace</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>int</Type>
+      <Name>PlaceholderTextInstance.FontSize</Name>
+      <Value xsi:type="xsd:int">18</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
       <Type>float</Type>
       <Name>PlaceholderTextInstance.Height</Name>
       <Value xsi:type="xsd:float">-4</Value>

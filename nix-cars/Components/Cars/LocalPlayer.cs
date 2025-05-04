@@ -49,6 +49,8 @@ namespace nix_cars.Components.Cars
 
         public FloatingBoostMeter floatingBoost;
         public FloatingLightTrail lightTrailL;
+        public FloatingLightTrail lightTrailR;
+
         public LocalPlayer(Car car) : base(car )
         {
             game = NixCars.GameInstance();
@@ -60,6 +62,13 @@ namespace nix_cars.Components.Cars
 
             floatingBoost = new FloatingBoostMeter();
             FloatingPlaneDrawer.Add(floatingBoost);
+
+            //lightTrailL = new FloatingLightTrail();
+            //lightTrailR = new FloatingLightTrail();
+            //FloatingPlaneDrawer.Add(lightTrailL);
+            //FloatingPlaneDrawer.Add(lightTrailR);
+
+
         }
         public bool inF, inB, inL, inR, inBoost;
         public void Update(bool f, bool b, bool l, bool r, bool boost, float deltaTime)
@@ -78,7 +87,7 @@ namespace nix_cars.Components.Cars
             car.HandleLights(b,boosting);
             
         }
-        public void PostCollisionUpdate()
+        public void PostCollisionUpdate(float deltaTime)
         {
             CalculateWorld();
             car.CalculateLightsPosition();
@@ -92,11 +101,25 @@ namespace nix_cars.Components.Cars
 
             nameTag.SetRT(mx);
 
-            mx = Matrix.CreateFromYawPitchRoll(yaw, 0f, 0f)
+            mx = Matrix.CreateFromYawPitchRoll(yaw, 0, 0f)
                 * Matrix.CreateTranslation(position + Vector3.Up * 0.25f - frontDirection * 3.5f);
 
             floatingBoost.SetRT(mx);
             floatingBoost.SetBoostValue(boostTimeRemaining / boostTimeMax);
+
+            //mx = Matrix.CreateFromYawPitchRoll(yaw + MathF.PI, 0, 0f)
+            //    * Matrix.CreateTranslation(car.brakeL.position - frontDirection * 2f);
+
+            //lightTrailL.SetRT(mx);
+
+
+            //mx = Matrix.CreateFromYawPitchRoll(yaw + MathF.PI, 0, 0f)
+            //    * Matrix.CreateTranslation(car.brakeR.position - frontDirection * 2f);
+
+            //lightTrailR.SetRT(mx);
+
+            //lightTrailL.Update(boosting, deltaTime);
+            //lightTrailR.Update(boosting, deltaTime);
         }
 
         public void TP(Vector3 loc)

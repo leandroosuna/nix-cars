@@ -175,7 +175,7 @@
     <Variable>
       <Type>int</Type>
       <Name>TextInstance.FontSize</Name>
-      <Value xsi:type="xsd:int">18</Value>
+      <Value xsi:type="xsd:int">20</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>

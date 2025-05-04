@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.Cars;
+using nix_cars.Components.GUI;
 using System;
 using System.Collections.Generic;
 
@@ -31,38 +32,90 @@ namespace nix_cars.Components.States
             ep.car = car;
             carPlayers.Add(ep);
 
+            ep = new EnemyPlayer(0);
+            car = new CarMuscle();
+            car.Init(ep);
+            ep.car = car;
+            carPlayers.Add(ep);
+
+            
             carCount = carPlayers.Count;
         }
         public override void OnSwitch()
         {
             game.IsMouseVisible = true;
             mouseLocked = false;
+            GumManager.SwitchTo(Screen.CARSELECT);
+            //game.camera.LockFromTo(new Vector3(2, 5, -5), Vector3.Zero);
+
+            for(int i = 0; i < carPlayers.Count; i++)
+            {
+                carPlayers[i].position = Vector3.Zero + Vector3.UnitX* 10 * i;
+                carPlayers[i].CalculateWorld();
+
+            }
+
         }
 
         float yawInFocus = 0;
+
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
-            //game.camera.RotateBy(new Vector2(uDeltaTimeFloat, 0));
-            game.camera.SmoothRotateTo(Vector3.Zero);
-            game.camera.UpdatePosition(new Vector3(150, 5, -150));
+            if(km.KeyDownOnce(km.Enter))
+            {
+                // TODO: assign car
+                GameStateManager.SwitchTo(State.RUN);
+            }
 
-            yawInFocus += uDeltaTimeFloat;
-            yawInFocus %= MathHelper.TwoPi;
+            if (km.KeyDownOnce(km.Escape))
+            {
+                GameStateManager.SwitchTo(State.MAIN);
+            }
 
-            carPlayers[carInFocus].position = Vector3.Zero;
-            carPlayers[carInFocus].yaw = yawInFocus;
-            carPlayers[carInFocus].CalculateWorld();
+            if (km.KeyDownOnce(km.Right2))
+                InFocusChangeBy(-1);
+            if (km.KeyDownOnce(km.Left2))
+                InFocusChangeBy(+1);
+
+            var ifPos = carPlayers[carInFocus].position;
+            var camPos = ifPos + new Vector3(0, 5, -5);
+
+            game.camera.SmoothMoveTo(camPos);
+            game.camera.SmoothRotateTo(new Vector3(0,-.5f,.5f));
+            game.camera.Update(uDeltaTimeFloat);
 
             
-            carPlayers[(carInFocus + 1)%carCount ].position = new Vector3(10,0,0);
-            carPlayers[(carInFocus + 1) % carCount].yaw =MathF.PI + MathHelper.PiOver4;
-            carPlayers[(carInFocus + 1) % carCount].CalculateWorld();
+            for(int i = 0; i < carPlayers.Count;i++)
+            {
+                if (i == carInFocus)
+                {
+                    carPlayers[i].yaw += uDeltaTimeFloat;
+                    carPlayers[i].yaw %= MathHelper.TwoPi;
+                }
+                else
+                {
+                    carPlayers[i].yaw = MathF.PI;
+                    
+                }
+                carPlayers[i].CalculateWorld();
 
-            carPlayers[(carInFocus + 2) % carCount].position = new Vector3(-10, 0, 0);
-            carPlayers[(carInFocus + 2) % carCount].yaw = MathF.PI - MathHelper.PiOver4;
-            carPlayers[(carInFocus + 2) % carCount].CalculateWorld();
+            }
+
+            carPlayers[carInFocus].yaw += uDeltaTimeFloat;
+            carPlayers[carInFocus].yaw %= MathHelper.TwoPi;
+
+            
+
+            //carPlayers[(carInFocus + 1)%carCount ].position = new Vector3(10,0,0);
+            //carPlayers[(carInFocus + 1) % carCount].yaw =MathF.PI + MathHelper.PiOver4;
+            //carPlayers[(carInFocus + 1) % carCount].CalculateWorld();
+
+            //carPlayers[(carInFocus + 2) % carCount].position = new Vector3(-10, 0, 0);
+            //carPlayers[(carInFocus + 2) % carCount].yaw = MathF.PI - MathHelper.PiOver4;
+            //carPlayers[(carInFocus + 2) % carCount].CalculateWorld();
 
 
             FinishUpdate();
@@ -94,6 +147,7 @@ namespace nix_cars.Components.States
             game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
+            
             DrawCars();
 
             game.GraphicsDevice.SetRenderTargets(game.lightTarget, game.blurHTarget, game.blurVTarget);
@@ -118,7 +172,10 @@ namespace nix_cars.Components.States
             game.fullScreenQuad.Draw(game.deferredEffect.effect);
 
 
-            FinishDraw();
+            //var str = $"{game.camera.position}";
+            //game.spriteBatch.Begin();
+            //game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
+            //game.spriteBatch.End();
         }
         
         void DrawCars()

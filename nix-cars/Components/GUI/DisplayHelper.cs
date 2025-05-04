@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace nix_cars.Components.DisplayHelper
+namespace nix_cars.Components.GUI
 {
     static class DisplayHelper
     {

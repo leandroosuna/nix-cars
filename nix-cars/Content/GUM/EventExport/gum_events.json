@@ -1435,6 +1435,342 @@
         "ElementType": "Screens",
         "EventType": 7,
         "TimestampUtc": "2025-04-29T22:56:20.399165Z"
+      },
+      {
+        "NewName": "RaceMenu",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 0,
+        "TimestampUtc": "2025-05-02T00:32:02.6896797Z"
+      },
+      {
+        "NewName": "RaceMenu.SpriteInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T00:32:25.1097783Z"
+      },
+      {
+        "NewName": "RaceHud",
+        "OldName": "RaceMenu",
+        "ElementType": "Screens",
+        "EventType": 2,
+        "TimestampUtc": "2025-05-02T00:39:24.6628584Z"
+      },
+      {
+        "NewName": "RaceHud.Ability0",
+        "OldName": "RaceHud.SpriteInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T00:40:35.0851011Z"
+      },
+      {
+        "NewName": "RaceHud.SpriteInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T00:57:13.0421689Z"
+      },
+      {
+        "NewName": "RaceHud.Ability1",
+        "OldName": "RaceHud.SpriteInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T00:57:18.4939572Z"
+      },
+      {
+        "NewName": "RaceHud.HitIndicator",
+        "OldName": "RaceHud.Ability1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T00:59:05.7654406Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "RaceHud.Sprite Ability0 in RaceHud",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-02T21:41:25.6416099Z"
+      },
+      {
+        "NewName": "RaceHud.TextInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T21:46:21.8399877Z"
+      },
+      {
+        "NewName": "RaceHud.Waiting",
+        "OldName": "RaceHud.TextInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:08:29.1273239Z"
+      },
+      {
+        "NewName": "RaceHud.ListBoxInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:10:25.2565024Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "RaceHud.Controls/ListBox ListBoxInstance in RaceHud",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-02T22:10:33.663219Z"
+      },
+      {
+        "NewName": "RaceHud.TextInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:10:44.3903881Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "RaceHud.Text TextInstance in RaceHud",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-02T22:11:27.9150083Z"
+      },
+      {
+        "NewName": "RaceHud.TextInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:11:31.3446023Z"
+      },
+      {
+        "NewName": "RaceHud.LAP",
+        "OldName": "RaceHud.TextInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:11:46.9277833Z"
+      },
+      {
+        "NewName": "RaceHud.LAP1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:12:17.1327518Z"
+      },
+      {
+        "NewName": "RaceHud.Lap",
+        "OldName": "RaceHud.LAP",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:12:29.0840817Z"
+      },
+      {
+        "NewName": "RaceHud.Lap",
+        "OldName": "RaceHud.Lap",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:12:35.4391913Z"
+      },
+      {
+        "NewName": "RaceHud.Positions",
+        "OldName": "RaceHud.LAP1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:12:41.9570128Z"
+      },
+      {
+        "NewName": "RaceHud.TitleMsg",
+        "OldName": "RaceHud.Waiting",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:15:01.4089884Z"
+      },
+      {
+        "NewName": "RaceHud.Lap1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:15:06.6540467Z"
+      },
+      {
+        "NewName": "RaceHud.Countdown",
+        "OldName": "RaceHud.Lap1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T22:15:59.0640614Z"
+      },
+      {
+        "NewName": "RaceHud.ColoredRectangleInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:16:57.1377329Z"
+      },
+      {
+        "NewName": "RaceHud.SpriteInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T22:42:39.1176862Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "RaceHud.Sprite SpriteInstance in RaceHud",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-02T23:14:39.1002675Z"
+      },
+      {
+        "NewName": "RaceHud.SpriteInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:14:46.2264155Z"
+      },
+      {
+        "NewName": "RaceHud.Ability0R",
+        "OldName": "RaceHud.ColoredRectangleInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:18:26.0025484Z"
+      },
+      {
+        "NewName": "RaceHud.sprA0",
+        "OldName": "RaceHud.SpriteInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:18:51.8105903Z"
+      },
+      {
+        "NewName": "RaceHud.ContainerInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:18:56.6850221Z"
+      },
+      {
+        "NewName": "RaceHud.Ability0Indicator",
+        "OldName": "RaceHud.ContainerInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:19:08.160978Z"
+      },
+      {
+        "NewName": "RaceHud.Ability0R1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:21:45.8886784Z"
+      },
+      {
+        "NewName": "RaceHud.sprA1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:21:45.9132179Z"
+      },
+      {
+        "NewName": "RaceHud.Ability0Indicator1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:21:45.952268Z"
+      },
+      {
+        "NewName": "RaceHud.AbilityIndicator0",
+        "OldName": "RaceHud.Ability0Indicator",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:22:21.6715042Z"
+      },
+      {
+        "NewName": "RaceHud.AbilityR0",
+        "OldName": "RaceHud.Ability0R",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:22:30.0260777Z"
+      },
+      {
+        "NewName": "RaceHud.sprA0",
+        "OldName": "RaceHud.sprA0",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:22:35.8612224Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "RaceHud.Container Ability0Indicator1 in RaceHud",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-05-02T23:22:42.1990925Z"
+      },
+      {
+        "NewName": "RaceHud.AbilityIndicator1",
+        "OldName": "RaceHud.Ability0Indicator1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:22:56.5808466Z"
+      },
+      {
+        "NewName": "RaceHud.AbilityR1",
+        "OldName": "RaceHud.Ability0R1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-02T23:22:59.4021943Z"
+      },
+      {
+        "NewName": "RaceHud.AbilityR2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:23:51.5985116Z"
+      },
+      {
+        "NewName": "RaceHud.sprA2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:23:51.6384793Z"
+      },
+      {
+        "NewName": "RaceHud.AbilityIndicator2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-02T23:23:51.6901359Z"
+      },
+      {
+        "NewName": "StartMenu.TextBoxInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-03T03:28:02.0038665Z"
+      },
+      {
+        "NewName": "RaceHud.TextBoxInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-03T03:28:14.8290661Z"
+      },
+      {
+        "NewName": "RaceHud.CommandBox",
+        "OldName": "RaceHud.TextBoxInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-03T03:29:11.7303578Z"
+      },
+      {
+        "NewName": "RaceHud.TextInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-05-03T03:29:40.3611662Z"
+      },
+      {
+        "NewName": "RaceHud.ServerResponse",
+        "OldName": "RaceHud.TextInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-05-03T03:30:24.0374625Z"
       }
     ]
   }

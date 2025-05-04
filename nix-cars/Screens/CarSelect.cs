@@ -5,11 +5,13 @@ using Gum.Wireframe;
 using Microsoft.Xna.Framework;
 using MonoGameGum;
 using nix_cars;
+using nix_cars.Components.GUI;
 using nix_cars.Components.States;
 using RenderingLibrary.Graphics;
 
 using System.Linq;
 
+namespace nix_cars.Screens;
 partial class CarSelect
 {
     public Vector3 rgb0 = Vector3.One;
@@ -94,16 +96,12 @@ partial class CarSelect
     }
     private void Select_Click(object sender, System.EventArgs e)
     {
-        NixCars.GumRoot.RemoveFromRoot();
         GameStateManager.SwitchTo(State.RUN);
     }
 
     private void Return_Click(object sender, System.EventArgs e)
     {
-        ScreenSave screen = NixCars.GumProject.Screens.Find(item => item.Name == "StartMenu");
-        NixCars.GumRoot.RemoveFromRoot();
-        NixCars.GumRoot = screen.ToGraphicalUiElement();
-        NixCars.GumRoot.AddToRoot();
         GameStateManager.SwitchTo(State.MAIN);
+        
     }
 }

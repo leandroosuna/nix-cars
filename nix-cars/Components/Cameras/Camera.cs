@@ -58,11 +58,7 @@ namespace nix_cars.Components.Cameras
             CalculateProjection();
         }
 
-        public void UpdatePosition(Vector3 position)
-        {
-            this.position = position;
-        }
-
+        
         public void MoveBy(bool f, bool b, bool l, bool r, bool u, bool d, float speed, float delta)
         {
             Vector3 dir = Vector3.Zero;
@@ -125,6 +121,7 @@ namespace nix_cars.Components.Cameras
         {
             targetPosition = target;
         }
+
         public void Update(float deltaTime)
         {
             frontDirection = Vector3.Lerp(frontDirection, targetDirection, deltaTime * smoothRotateSpeed);
@@ -135,14 +132,7 @@ namespace nix_cars.Components.Cameras
             UpdatePitchYawVectors();
             CalculateView();
         }
-
-        public void ResetToCenter()
-        {
-            yaw = 0;
-            pitch = 0;
-            UpdateVectors();
-            CalculateView();
-        }
+        
         public void UpdatePitchYawVectors()
         {
             yaw = MathHelper.ToDegrees(MathF.Atan2(frontDirection.X, frontDirection.Z));
@@ -180,9 +170,6 @@ namespace nix_cars.Components.Cameras
         {
             if(!isFree)
             {
-                //frontDirection = CarManager.playerCar.frontDirection;
-                //UpdatePitchYawVectors();
-                //CalculateView();
                 game.gameState.mouseLocked = true;
                 game.IsMouseVisible = false;
                 game.gameState.mouseDelta = Vector2.Zero;

@@ -16,8 +16,8 @@ namespace nix_cars.Components.Cars
         public uint id;
         public string name;
         public bool connected;
-        public Vector3 position = new Vector3(232f,9,-323);
-        public float yaw = 0f;
+        public Vector3 position = new Vector3(288.4f,9,-18.8f);
+        public float yaw = -1.38f;
         public float pitch = 0f;
         public float steeringYaw = 0f;
         public Vector3 frontDirection;

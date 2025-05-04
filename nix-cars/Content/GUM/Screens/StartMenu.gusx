@@ -54,7 +54,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Exit.Y</Name>
-      <Value xsi:type="xsd:float">140</Value>
+      <Value xsi:type="xsd:float">249</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -143,7 +143,19 @@
     <Variable>
       <Type>string</Type>
       <Name>NameBox.PlaceholderText</Name>
-      <Value xsi:type="xsd:string">Nombre</Value>
+      <Value xsi:type="xsd:string"></Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>TextBoxCategory</Type>
+      <Name>NameBox.TextBoxCategoryState</Name>
+      <Value xsi:type="xsd:string">Selected</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>bool</Type>
+      <Name>NameBox.Visible</Name>
+      <Value xsi:type="xsd:boolean">true</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -263,7 +275,7 @@
     <Variable>
       <Type>float</Type>
       <Name>NameBoxLabel.X</Name>
-      <Value xsi:type="xsd:float">0</Value>
+      <Value xsi:type="xsd:float">-11</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -347,7 +359,7 @@
     <Variable>
       <Type>float</Type>
       <Name>Options.Y</Name>
-      <Value xsi:type="xsd:float">59</Value>
+      <Value xsi:type="xsd:float">139</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
@@ -431,7 +443,13 @@
     <Variable>
       <Type>int</Type>
       <Name>Title.FontSize</Name>
-      <Value xsi:type="xsd:int">30</Value>
+      <Value xsi:type="xsd:int">40</Value>
+      <SetsValue>true</SetsValue>
+    </Variable>
+    <Variable>
+      <Type>int</Type>
+      <Name>Title.OutlineThickness</Name>
+      <Value xsi:type="xsd:int">1</Value>
       <SetsValue>true</SetsValue>
     </Variable>
     <Variable>
