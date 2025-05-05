@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.GUI;
 using nix_cars.Screens;
+using SharpDX.Direct3D9;
 
 namespace nix_cars.Components.States
 {
@@ -21,10 +22,12 @@ namespace nix_cars.Components.States
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            
-            //game.camera.RotateBy(new Vector2(uDeltaTimeFloat, 0));
 
-            if(km.KeyDownOnce(km.Escape))
+            game.camera.SmoothMoveTo(new Vector3(0,5,-5));
+            game.camera.SmoothRotateTo(Vector3.Zero);
+            game.camera.Update(uDeltaTimeFloat);
+
+            if (km.KeyDownOnce(km.Escape))
             {
                 game.Exit();
             }

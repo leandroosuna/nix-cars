@@ -54,7 +54,7 @@ namespace nix_cars.Components.States
             obb2 = new OrientedBoundingBox(new Vector3(230f, 10, -320) + new Vector3(0, 0.75f, 0), new Vector3(1.125f, .7f, 2.5f));
             obb2.Orientation = Matrix.Identity;
 
-            var sp = LoadPositions("map-spline.xml");
+            var sp = LoadPositions("Files/map-spline.xml");
             //sp.Add(sp[0]);
             mapSpline = sp.ToArray();
 
@@ -64,8 +64,8 @@ namespace nix_cars.Components.States
         {
             //game.IsMouseVisible = false;
             //mouseLocked = true; 
-
-            GumManager.SwitchTo(Screen.RACEHUD);
+            GumManager.Clear();
+            //GumManager.SwitchTo(Screen.RACEHUD);
         }
         
         bool mb1Down = false;
@@ -98,10 +98,18 @@ namespace nix_cars.Components.States
 
             if (km.KeyDownOnce(km.Escape))
             {
-                if(GumManager.CurrentScreenIs(Screen.RACEHUD))
-                    GumManager.SwitchTo(Screen.OPTIONS);
+                //if(GumManager.CurrentScreenIs(Screen.RACEHUD))
+                //    GumManager.SwitchTo(Screen.OPTIONS);
+                //else
+                //    GumManager.SwitchTo(Screen.RACEHUD);
+
+                if (GumManager.CurrentScreenIs(Screen.OPTIONS))
+                    GumManager.Clear();
                 else
-                    GumManager.SwitchTo(Screen.RACEHUD);
+                    GumManager.SwitchTo(Screen.OPTIONS);
+
+
+                
             }
 
             if (km.KeyDownOnce(km.CAPS))
@@ -369,8 +377,8 @@ namespace nix_cars.Components.States
             game.basicModelEffect.SetTech("number");
             game.basicModelEffect.SetKA(0.3f);
             game.basicModelEffect.SetKD(0.9f);
-            game.basicModelEffect.SetKS(0.8f);
-            game.basicModelEffect.SetShininess(30f);
+            game.basicModelEffect.SetKS(0.3f);
+            game.basicModelEffect.SetShininess(5f);
             game.basicModelEffect.SetColor(Color.White.ToVector3());
             game.basicModelEffect.SetTiling(Vector2.One);
 

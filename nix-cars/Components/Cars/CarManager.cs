@@ -1,23 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.Effects;
+using nix_cars.Components.States;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace nix_cars.Components.Cars
 {
     public class CarManager
     {
         static List<(string, Model)> carModels = new List<(string, Model)>();
+        static List<CarColors> carColors = new List<CarColors>();
         static string[] carModelNames;
 
         static NixCars game;
 
         public static LocalPlayer localPlayer;
         public static List<EnemyPlayer> players = new List<EnemyPlayer>();
+        const string ColorsFilePath = "Files/car-colors.xml";
         public static Model GetModel(string name)
         {
             foreach (var (n, m) in carModels)
@@ -39,17 +44,22 @@ namespace nix_cars.Components.Cars
             foreach (var (_,m) in carModels)
                 NixCars.AssignEffectToModel(m, game.basicModelEffect.effect);
 
-            // TODO: get type and colors from file.
-            //var pc = new CarSport();
-            //var pc = new CarRoadster();
-            //var pc = new CarHatchback();
-            //var pc = new CarF1();
+
+            LoadCarColors();
+
+            //carColors = [
+            //    new CarColors("sport", [new Vector3(1, 0.5f, 0), Vector3.One]),
+            //    new CarColors("roadster", [new Vector3(0, 0.25f, 1), Vector3.One, new Vector3(0, 0f, .8f)]),
+            //    new CarColors("hatchback", [new Vector3(0, 1, 1), Vector3.One, ]),
+            //    new CarColors("muscle", [new Vector3(0, 1, 0), Vector3.One, Vector3.One])
+            //];
+            //SaveCarColors();
+
+
+            
             var pc = new CarMuscle();
             localPlayer = new LocalPlayer(pc);
-            
-            //enemyCar = new Player(GetModel("sport"), CarType.Sport);
-            //enemyCar.position = new Vector3(200f, 10, -300);
-
+           
         }
        
         public static void UpdatePlayers()
@@ -96,7 +106,96 @@ namespace nix_cars.Components.Cars
 
             return new EnemyPlayer(uint.MaxValue);
         }
+
+        public static void LoadColorsTo(List<Player> players)
+        {
+            foreach(var p in players)
+            {
+                var name = "sport";
+
+                if (p.car is CarSport)
+                    name = "sport";
+                if (p.car is CarHatchback)
+                    name = "hatchback";
+                if (p.car is CarMuscle)
+                    name = "muscle";
+                if (p.car is CarRoadster)
+                    name = "roadster";
+
+                var c = carColors.Find(cc => cc.name == name);
+                p.car.colors = c.colors;
+            }
+        }
+
+        public static void SaveColorsFrom(Car car)
+        {
+            var name = "sport";
+
+            if (car is CarSport)
+                name = "sport";
+            if (car is CarHatchback)
+                name = "hatchback";
+            if (car is CarMuscle)
+                name = "muscle";
+            if (car is CarRoadster)
+                name = "roadster";
+
+            var c = carColors.Find(cc => cc.name == name);
+            c.colors = car.colors;
+
+            SaveCarColors();
+        }
+        public static void SaveCarColors()
+        {
+            var serializer = new XmlSerializer(typeof(List<CarColors>));
+            using (var writer = new StreamWriter(ColorsFilePath))
+            {
+                serializer.Serialize(writer, carColors);
+            }
+        }
+        public static void LoadCarColors()
+        {
+            var serializer = new XmlSerializer(typeof(List<CarColors>));
+            using (var reader = new StreamReader(ColorsFilePath))
+            {
+                carColors = (List<CarColors>)serializer.Deserialize(reader);
+            }
+        }
+    }
+    [Serializable]
+    public class CarColors
+    {
+        public string name;
+        public Vector3[] colors;
+
+        public CarColors() { }
+        public CarColors(string name, Vector3[] colors)
+        {
+            this.name = name;
+            this.colors = colors;
+        }
+        public CarColors(CarColorsSer ccs) 
+        {
+            name = ccs.name;
+            colors = ccs.colors.Select(c => new Vector3(c.X, c.Y, c.Z)).ToArray();
+        }
     }
 
+    [Serializable]
+    public class CarColorsSer
+    {
+        public string name;
+
+        public SerializableVector3[] colors;
+
+        public CarColorsSer() { }
+        public CarColorsSer(CarColors cs)
+        {
+            name = cs.name;
+            colors = cs.colors.Select(s => new SerializableVector3(s)).ToArray();
+        }
+    }
+
+    
 
 }

@@ -63,7 +63,7 @@ namespace nix_cars
         public static int displayWidth;
         public static int displayHeight;
         public static int displayHz;
-        public const string appSettingsPath = "app-settings.json";
+        public const string appSettingsPath = "Files/app-settings.json";
         public NixCars()
         {
             displayHz = DisplayHelper.GetCurrentRefreshRate();
@@ -113,8 +113,7 @@ namespace nix_cars
         
         protected override void Initialize()
         {
-            GumManager.Init(this);
-
+           
             base.Initialize();
         }
 
@@ -131,6 +130,8 @@ namespace nix_cars
             font15 = Content.Load<SpriteFont>(ContentFolderFonts + "unispace/15");
             SetupRenderTargets();
             lightsManager = new LightsManager();
+            
+            GumManager.Init(this);
 
             CarManager.Init();
             GameStateManager.Init();
@@ -152,10 +153,8 @@ namespace nix_cars
             
             gizmos.UpdateViewProjection(game.camera.view, game.camera.projection);
 
-
             GumManager.Update(gameTime);
-            
-
+           
             base.Update(gameTime);
         }
 

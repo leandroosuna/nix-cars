@@ -62,6 +62,10 @@ namespace nix_cars.Components.GUI
             GumRoot = GumProject.Screens.Find(item => item.Name == name).ToGraphicalUiElement();
             GumRoot.AddToRoot();
         }
+        public static void Clear()
+        {
+            GumRoot.RemoveFromRoot();
+        }
         public static void ReCenterUI(bool isFullScreen)
         {
             if (GumRoot != null)
@@ -88,6 +92,10 @@ namespace nix_cars.Components.GUI
         public static StartMenu GetStartMenu()
         {
             return StartMenu.GetInstance();
+        }
+        public static CarSelect GetCarSelect()
+        {
+            return CarSelect.GetInstance();
         }
     }
     public enum Screen

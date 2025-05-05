@@ -2,11 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
+using nix_cars.Components.States;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace nix_cars.Components.Cars
 {
@@ -30,13 +33,13 @@ namespace nix_cars.Components.Cars
         public Vector3 colliderCenterOffset = new Vector3(0, 0.75f, 0);
 
         public NixCars game;
-        
+
         public Model model;
 
         public Vector3[] colors;
 
         public Player p;
-        
+
         public void Init(Player p)
         {
             this.p = p;
@@ -95,9 +98,9 @@ namespace nix_cars.Components.Cars
             }
             else
             {
-                if(p.speed > 0 && boosting)
+                if (p.speed > 0 && boosting)
                 {
-                    brakeL.color = new Vector3(.5f,0,1);
+                    brakeL.color = new Vector3(.5f, 0, 1);
                     brakeL.specularColor = brakeL.color;
                     brakeR.color = new Vector3(.5f, 0, 1);
                     brakeR.specularColor = brakeR.color;
@@ -122,7 +125,10 @@ namespace nix_cars.Components.Cars
             collider.Center = p.position + colliderCenterOffset;
             collider.Orientation = Matrix.CreateFromYawPitchRoll(p.yaw, p.pitch, 0);
         }
-
+        
+        
         public abstract void Draw();
     }
+
+    
 }

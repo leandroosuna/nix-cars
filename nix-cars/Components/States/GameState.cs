@@ -100,7 +100,7 @@ namespace nix_cars.Components.States
 
         public static void InitInput()
         {
-            var fileCfg = "input-settings.json";
+            var fileCfg = "Files/input-settings.json";
             var jsonKeys = JsonKeys.LoadFromJson(fileCfg);
             km = new KeyMappings(jsonKeys);
 

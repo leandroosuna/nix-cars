@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 using nix_cars.Components.Cars;
 using nix_cars.Components.GUI;
+using nix_cars.Screens;
 using System;
 using System.Collections.Generic;
 
@@ -38,18 +40,24 @@ namespace nix_cars.Components.States
             ep.car = car;
             carPlayers.Add(ep);
 
-            
+            CarManager.LoadColorsTo(carPlayers);
             carCount = carPlayers.Count;
         }
+        CarSelect cs;
         public override void OnSwitch()
         {
             game.IsMouseVisible = true;
             mouseLocked = false;
             GumManager.SwitchTo(Screen.CARSELECT);
-            //game.camera.LockFromTo(new Vector3(2, 5, -5), Vector3.Zero);
+            cs = GumManager.GetCarSelect();
+            
+            
+
+            SetSelectedColorPicker();
 
             for(int i = 0; i < carPlayers.Count; i++)
             {
+                carPlayers[i].car.p = carPlayers[i];
                 carPlayers[i].position = Vector3.Zero + Vector3.UnitX* 10 * i;
                 carPlayers[i].CalculateWorld();
 
@@ -66,8 +74,7 @@ namespace nix_cars.Components.States
 
             if(km.KeyDownOnce(km.Enter))
             {
-                // TODO: assign car
-                GameStateManager.SwitchTo(State.RUN);
+                SelectAndEnter();
             }
 
             if (km.KeyDownOnce(km.Escape))
@@ -75,9 +82,9 @@ namespace nix_cars.Components.States
                 GameStateManager.SwitchTo(State.MAIN);
             }
 
-            if (km.KeyDownOnce(km.Right2))
+            if (km.KeyDownOnce(km.Right) || km.KeyDownOnce(km.Right2))
                 InFocusChangeBy(-1);
-            if (km.KeyDownOnce(km.Left2))
+            if (km.KeyDownOnce(km.Left) || km.KeyDownOnce(km.Left2))
                 InFocusChangeBy(+1);
 
             var ifPos = carPlayers[carInFocus].position;
@@ -107,17 +114,6 @@ namespace nix_cars.Components.States
             carPlayers[carInFocus].yaw += uDeltaTimeFloat;
             carPlayers[carInFocus].yaw %= MathHelper.TwoPi;
 
-            
-
-            //carPlayers[(carInFocus + 1)%carCount ].position = new Vector3(10,0,0);
-            //carPlayers[(carInFocus + 1) % carCount].yaw =MathF.PI + MathHelper.PiOver4;
-            //carPlayers[(carInFocus + 1) % carCount].CalculateWorld();
-
-            //carPlayers[(carInFocus + 2) % carCount].position = new Vector3(-10, 0, 0);
-            //carPlayers[(carInFocus + 2) % carCount].yaw = MathF.PI - MathHelper.PiOver4;
-            //carPlayers[(carInFocus + 2) % carCount].CalculateWorld();
-
-
             FinishUpdate();
         }
         public void InFocusChangeBy(int v)
@@ -127,6 +123,51 @@ namespace nix_cars.Components.States
                 carInFocus = carCount -1;
             else
                 carInFocus %= carCount;
+
+            SetSelectedColorPicker();
+        }
+
+        public void SetSelectedColorPicker()
+        {
+            var c = carPlayers[carInFocus].car.colors;
+
+            cs.eventsEnabled = false;
+            cs.R.Value = c[0].X * 100;
+            cs.G.Value = c[0].Y * 100;
+            cs.B.Value = c[0].Z * 100;
+            cs.rgb0 = c[0];
+            cs.SelectedColor.Color = new Color(c[0].X, c[0].Y, c[0].Z);
+            cs.RVal.Text = $"{(int)(c[0].X * 255)}";
+            cs.GVal.Text = $"{(int)(c[0].Y * 255)}";
+            cs.BVal.Text = $"{(int)(c[0].Z * 255)}";
+
+            cs.R1.Value = c[1].X * 100;
+            cs.G1.Value = c[1].Y * 100;
+            cs.B1.Value = c[1].Z * 100;
+            cs.rgb1 = c[1]; 
+            cs.SelectedColor1.Color = new Color(c[1].X, c[1].Y, c[1].Z);
+            cs.RVal1.Text = $"{(int)(c[1].X * 255)}";
+            cs.GVal1.Text = $"{(int)(c[1].Y * 255)}";
+            cs.BVal1.Text = $"{(int)(c[1].Z * 255)}";
+            
+            if (c.Length > 2)
+            {
+                cs.R2.Value = c[2].X * 100;
+                cs.G2.Value = c[2].Y * 100;
+                cs.B2.Value = c[2].Z * 100;
+                cs.ColorPicker3.Visible = true;
+                cs.rgb2 = c[2]; 
+                cs.SelectedColor2.Color = new Color(c[2].X, c[2].Y, c[2].Z);
+                cs.RVal2.Text = $"{(int)(c[2].X * 255)}";
+                cs.GVal2.Text = $"{(int)(c[2].Y * 255)}";
+                cs.BVal2.Text = $"{(int)(c[2].Z * 255)}";
+               
+            }
+            else
+            {
+                cs.ColorPicker3.Visible = false;
+            }
+            cs.eventsEnabled = true;
         }
         public void SetCarColor(int colIndex, Vector3 color)
         {
@@ -177,7 +218,15 @@ namespace nix_cars.Components.States
             //game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
             //game.spriteBatch.End();
         }
-        
+        public void SelectAndEnter()
+        {
+            //TODO: send to server, for other players to update the model. move to CarManager?
+            CarManager.localPlayer.car = carPlayers[carInFocus].car;
+            CarManager.localPlayer.car.p = CarManager.localPlayer;
+            CarManager.SaveColorsFrom(CarManager.localPlayer.car);
+
+            GameStateManager.SwitchTo(State.RUN);
+        }
         void DrawCars()
         {
             foreach(var cp in carPlayers)

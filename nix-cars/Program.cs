@@ -9,6 +9,6 @@ try
 }
 catch (Exception e)
 {
-    File.WriteAllText("CRASH-LOG.txt", $"MSG: {e.Message}\nFN: {e.TargetSite}\nTRACE: {e.StackTrace}\n");
+    File.WriteAllText("Files/CRASH-LOG.txt", $"MSG: {e.Message}\nFN: {e.TargetSite}\nTRACE: {e.StackTrace}\n");
     throw;
 }

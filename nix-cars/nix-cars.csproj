@@ -19,16 +19,19 @@
     <PackageReference Include="RiptideNetworking.Riptide" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="app-settings.json">
+    <None Update="Files\app-settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Content\GUM\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="input-settings.json">
+    <None Update="Files\car-colors.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="map-spline.xml">
+    <None Update="Files\input-settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Files\map-spline.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
