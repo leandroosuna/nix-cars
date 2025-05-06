@@ -771,9 +771,11 @@ namespace nix_cars.Components.States
                 peachMapTex[i] = numTex[i];
             }
             var path = NixCars.ContentFolder3D + "maps/peach/";
-            //TODO: 2,3,17,19
+            
             peachMapTex[0] = game.Content.Load<Texture2D>(path + "goal");
             peachMapTex[1] = game.Content.Load<Texture2D>(path + "heri");
+            peachMapTex[2] = game.Content.Load<Texture2D>(path + "start"); 
+            peachMapTex[3] = game.Content.Load<Texture2D>(path + "wall01");
             peachMapTex[4] = game.Content.Load<Texture2D>(path + "flower_r");
             peachMapTex[5] = game.Content.Load<Texture2D>(path + "wall02");
             peachMapTex[6] = game.Content.Load<Texture2D>(path + "waterC");
@@ -787,6 +789,7 @@ namespace nix_cars.Components.States
             peachMapTex[14] = game.Content.Load<Texture2D>(path + "flower_y");
             peachMapTex[15] = game.Content.Load<Texture2D>(path + "saku");
             peachMapTex[16] = game.Content.Load<Texture2D>(path + "suna");
+            peachMapTex[17] = game.Content.Load<Texture2D>(path + "flower_4");
             peachMapTex[18] = game.Content.Load<Texture2D>(path + "wall01");
             peachMapTex[19] = game.Content.Load<Texture2D>(path + "NemuMo5");
             peachMapTex[20] = game.Content.Load<Texture2D>(path + "grass");
