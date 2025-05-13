@@ -3,6 +3,7 @@ using Gum.DataTypes;
 using Gum.Managers;
 using Gum.Wireframe;
 using MonoGameGum;
+using Newtonsoft.Json.Linq;
 using nix_cars;
 using nix_cars.Components.GUI;
 using nix_cars.Components.States;
@@ -27,8 +28,46 @@ partial class StartMenu
         var timeout = 2000; //ms
         timer = new System.Timers.Timer(timeout);
         timer.Elapsed += Timer_Elapsed;
+        var nb = game.CFG["PlayerName"].Value<string>();
+
+        
+        foreach (var c in nb)
+            NameBox.HandleCharEntered(c);
 
         NameBox.IsFocused = true;
+
+        NameBox.TextChanged += NameBox_TextChanged;
+    }
+
+    private void NameBox_TextChanged(object sender, System.EventArgs e)
+    {
+        var nt = NameBox.Text;
+        if(nt.Contains('ñ'))
+        {
+            NameBox.Text = nt.Replace('ñ', 'n');
+        }
+        
+        if (nt.Contains('á'))
+        {
+            NameBox.Text = nt.Replace('á', 'a');
+        }
+        if (nt.Contains('é'))
+        {
+            NameBox.Text = nt.Replace('é', 'e');
+        }
+        if (nt.Contains('í'))
+        {
+            NameBox.Text = nt.Replace('í', 'i');
+        }
+        if (nt.Contains('ó'))
+        {
+            NameBox.Text = nt.Replace('ó', 'o');
+        }
+        if (nt.Contains('ú'))
+        {
+            NameBox.Text = nt.Replace('ú', 'u');
+        }
+
     }
 
     private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -49,16 +88,7 @@ partial class StartMenu
 
     private void Start_Click(object sender, System.EventArgs e)
     {
-        if(NameBox.Text == "")
-        {
-            ToastError.TextInstance.Text = "Ingresa tu nombre para entrar";
-            ToastError.IsVisible = true;
-            timer.Start();
-        }
-        else
-        {
-            GameStateManager.SwitchTo(State.CARSELECT);
-        }
+        GameStateManager.mainMenu.HandleEnterGame();
     }
 
     public static StartMenu GetInstance()

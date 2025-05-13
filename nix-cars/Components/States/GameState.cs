@@ -75,6 +75,7 @@ namespace nix_cars.Components.States
             game.deferredEffect.SetView(game.camera.view);
             game.deferredEffect.SetProjection(game.camera.projection);
             game.deferredEffect.SetCameraPosition(game.camera.position);
+
             
             game.lightsManager.Update(uDeltaTimeFloat);
         }

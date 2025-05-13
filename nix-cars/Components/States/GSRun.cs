@@ -15,6 +15,9 @@ using System.IO;
 using System.Xml.Serialization;
 
 using nix_cars.Components.GUI;
+using nix_cars.Screens;
+using Riptide;
+using nix_cars.Components.Sound;
 
 
 namespace nix_cars.Components.States
@@ -28,6 +31,9 @@ namespace nix_cars.Components.States
         Texture2D[] peachMapTex;
         Model rocket;
         Texture2D rocketTex;
+        RaceHud rh;
+        LocalPlayer lp;
+        public string gameMode;
         public GSRun() : base()
         {
             plane = game.Content.Load<Model>(NixCars.ContentFolder3D + "basic/plane");
@@ -58,14 +64,18 @@ namespace nix_cars.Components.States
             //sp.Add(sp[0]);
             mapSpline = sp.ToArray();
 
-            
+            lp = CarManager.localPlayer;
+
         }
         public override void OnSwitch()
         {
             //game.IsMouseVisible = false;
             //mouseLocked = true; 
-            GumManager.Clear();
-            //GumManager.SwitchTo(Screen.RACEHUD);
+            //GumManager.Clear();
+            GumManager.SwitchTo(Screen.RACEHUD);
+            rh = GumManager.GetRaceHud();
+            NetworkManager.SendCarChange();
+            rh.TitleMsg.Visible = true;
         }
         
         bool mb1Down = false;
@@ -92,36 +102,31 @@ namespace nix_cars.Components.States
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            var lp = CarManager.localPlayer;
-
+            
             secTimer += uDeltaTimeFloat;
 
             if (km.KeyDownOnce(km.Escape))
             {
-                //if(GumManager.CurrentScreenIs(Screen.RACEHUD))
-                //    GumManager.SwitchTo(Screen.OPTIONS);
-                //else
-                //    GumManager.SwitchTo(Screen.RACEHUD);
-
-                if (GumManager.CurrentScreenIs(Screen.OPTIONS))
-                    GumManager.Clear();
-                else
+                if (GumManager.CurrentScreenIs(Screen.RACEHUD))
                     GumManager.SwitchTo(Screen.OPTIONS);
-
-
-                
+                else
+                {
+                    GumManager.SwitchTo(Screen.RACEHUD);
+                    rh = GumManager.GetRaceHud();
+                }
+                //TODO: fix racehud restore after options
             }
 
-            if (km.KeyDownOnce(km.CAPS))
-            {
-                game.camera.ToggleFree();
+            //if (km.KeyDownOnce(km.CAPS))
+            //{
+            //    game.camera.ToggleFree();
                
-            }
+            //}
 
             if(km.KeyDownOnce(km.Enter))
             {
                 commandMode = !commandMode;
-                var rh = GumManager.GetRaceHud();
+                
                 var cb = rh.CommandBox;
                 var svr = rh.ServerResponse;
                 if (commandMode)
@@ -138,11 +143,17 @@ namespace nix_cars.Components.States
                     //cb.IsVisible = true;
                     cb.Visual.Visible = false;
                     svr.Visible = false;
-
-                    Debug.WriteLine(cb.Text);
+                    
+                    if(cb.Text != "")
+                        NetworkManager.SendCommand(cb.Text);
+                    //Debug.WriteLine(cb.Text);
                 }
             }
-
+            
+            if(km.KeyDownOnce(km.Reset) && !commandMode)
+            {
+                ResetToClosestInSpline();
+            }
             //if(mappingSpline)
             //{
             //    if (secTimer >= 1)
@@ -181,8 +192,8 @@ namespace nix_cars.Components.States
             FloorMapCollision();
             lp.PostCollisionUpdate(uDeltaTimeFloat);
             LapProgress();
-
-
+            UpdateLapPositions();
+            SoundManager.EngineSound(lp, uDeltaTimeFloat);
             if (!game.camera.isFree)
             {
                 game.camera.SmoothRotateTo(Vector3.Normalize(lp.frontDirection - Vector3.Up * 0.5f));
@@ -241,6 +252,8 @@ namespace nix_cars.Components.States
                 cDown = false;
             }
             timerS += uDeltaTimeFloat;
+
+
             //var a1 = NixCars.GumRoot.GetGraphicalUiElementByName("HitIndicator") as SpriteRuntime;
             //if(timerS >= .08f)
             //{
@@ -261,11 +274,21 @@ namespace nix_cars.Components.States
             //var cb = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<TextBox>(gue, "CommandBox");
             //var cb = NixCars.GumRoot.GetGraphicalUiElementByName("CommandBox");
             //var textBox = cb. as TextBox;
-           
+
+            // TODO: position lock after race end, spin around and show end position. spectate?
 
             FinishUpdate();
         }
-        
+
+        private void ResetToClosestInSpline()
+        {
+            var sp = mapSpline[mapSplineCurrentIndex];
+            var spN = mapSpline[getSplineIndex(mapSplineCurrentIndex, +1)];
+            var dir = Vector3.Normalize(spN - sp);
+            lp.TP(sp + Vector3.Up, dir);
+            lp.speed = 0;
+        }
+
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
@@ -343,9 +366,46 @@ namespace nix_cars.Components.States
 
             var th = triHitID == uint.MaxValue ? "" : $"{triHitID}";
 
-            var str = $"{FPS}";
+            
+            rh.FPS.Text = $"{FPS}";
+            if (FPS < 30)
+                rh.FPS.Color = Color.Red;
+            else if (FPS < 60)
+                rh.FPS.Color = Color.Yellow;
+            else if (FPS < 100)
+                rh.FPS.Color = Color.Green;
+            else
+                rh.FPS.Color = Color.Cyan;
 
-            game.spriteBatch.DrawString(game.font25, str, Vector2.Zero, Color.White);
+            var rtt = NetworkManager.Client.RTT;
+
+            if (rtt == -1)
+            {
+                rh.RTT.Text = "offline";
+                rh.RTT.Color = Color.Gray;
+            }
+            else
+            {
+                rh.RTT.Text = $"{rtt} ms";
+                if(rtt < 20)
+                    rh.RTT.Color = Color.Cyan;
+                else if(rtt < 40)
+                    rh.RTT.Color = Color.Green;
+                else if (rtt < 100)
+                    rh.RTT.Color = Color.Yellow;
+                else 
+                    rh.RTT.Color = Color.Red;
+
+
+            }
+            var e1 = SoundManager.soundEngine1Instance;
+            var e2 = SoundManager.soundEngine2Instance;
+
+            var topLeft = $"";
+            //var topLeft = $"{e1.State.ToString()} {e1.Volume} {e1.Pitch}  {e2.State.ToString()} {e2.Volume} {e2.Pitch}";
+
+
+            game.spriteBatch.DrawString(game.font25, topLeft, Vector2.Zero, Color.White);
 
             game.spriteBatch.End();
             
@@ -431,14 +491,17 @@ namespace nix_cars.Components.States
                 mesh.Draw();
             }
         }
-        float progress;
 
         int mapSplineCurrentIndex = -1;
         float progressFrom;
         float progressTo;
+        bool lastFrameDeadzone = false;
+        bool dzInFacingForward = false;
+        bool dzInGoingForward = false;
+        float facingFrontYaw = -1.38f;
+
         void LapProgress()
         {
-            // TODO: lap count detection
             var lp = CarManager.localPlayer;
             var pos = lp.position;
 
@@ -484,8 +547,6 @@ namespace nix_cars.Components.States
 
             Vector3 p0 = Vector3.Zero;
             Vector3 a = Vector3.Zero;
-            //float progressFrom;
-            //float progressTo;
             float totD;
 
             if (dPrev < dNext)
@@ -494,8 +555,7 @@ namespace nix_cars.Components.States
                 a = current - prev;
                 progressFrom = (float)prevIndex / mapLength;
                 progressTo = (float)mapSplineCurrentIndex / mapLength;
-                 if (nextIndex == mapSplineCurrentIndex)
-                    progressTo = 1;
+
                 totD = Vector3.DistanceSquared(prev, current);
             }
             else
@@ -504,11 +564,62 @@ namespace nix_cars.Components.States
                 a = next - current;
                 progressFrom = (float)mapSplineCurrentIndex / mapLength;
                 progressTo = (float)nextIndex / mapLength;
-                if (nextIndex == 0)
-                    progressTo = 1;
+                
                 totD = Vector3.DistanceSquared(current, next);
             }
 
+            bool deadzone = progressFrom >= 0.99 && progressTo == 0;
+            if (deadzone)
+            {
+                if(!lastFrameDeadzone)
+                {
+                    lastFrameDeadzone = true;
+                    dzInFacingForward = Math.Abs(lp.yaw - facingFrontYaw) <= MathHelper.PiOver2;
+                    dzInGoingForward = lp.speed >= 0;
+
+                }
+                lp.progress = 0.99f;
+
+                
+                return;
+            }
+            else
+            {
+                if (lastFrameDeadzone)
+                {
+                    lastFrameDeadzone = false;
+  
+                    var dzOutFacingForward = Math.Abs(lp.yaw - facingFrontYaw) <= MathHelper.PiOver2;
+                    var dzOutGoingForward = lp.speed >= 0;
+                    //Debug.WriteLine("");
+                    if ((dzInFacingForward && dzInGoingForward && dzOutFacingForward && dzOutGoingForward) ||
+                        (!dzInFacingForward && !dzInGoingForward && !dzOutFacingForward && !dzOutGoingForward))
+                    {
+                        //Debug.WriteLine("+1 LAP");
+                        if (gameMode == "race")
+                        {
+                            //Debug.WriteLine("sent");
+                            NetworkManager.SendLap(true);
+                        }
+                    }
+                    else if ((dzInFacingForward && !dzInGoingForward && dzOutFacingForward && !dzOutGoingForward) ||
+                        (!dzInFacingForward && dzInGoingForward && !dzOutFacingForward && dzOutGoingForward))
+                    {
+                        //Debug.WriteLine("-1 LAP");
+                        if (gameMode == "race")
+                        {
+                            //Debug.WriteLine("sent");
+                            NetworkManager.SendLap(false);
+                        }
+                    }    
+                    else
+                    {
+                        //Debug.WriteLine($"no change inf {dzInFacingForward} ins {dzInGoingForward} of {dzOutFacingForward} os {dzOutGoingForward}");
+                    }
+
+                    
+                }
+            }
            
 
             var p0p = pos - p0;
@@ -521,8 +632,10 @@ namespace nix_cars.Components.States
 
             float lerpFactor = Vector3.DistanceSquared(p0, proj) / totD;
             
-            progress = float.Lerp(progressFrom, progressTo, lerpFactor);
+            
+            lp.progress = float.Lerp(progressFrom, progressTo, lerpFactor);
 
+            
         }
 
         int getSplineIndex(int index, int delta)
@@ -633,6 +746,112 @@ namespace nix_cars.Components.States
         {
             FloatingPlaneDrawer.ResolutionChange(w, h);
         }
+
+        public void GameModeChange(Message message)
+        {
+            var str = message.GetString();
+            gameMode = str;
+            switch (str)
+            {
+                case "free":
+                    lp.positionLocked = false;
+                    
+                    rh.TitleMsg.Text = "sos libre";
+                    rh.TitleMsg.Visible = true;
+                    rh.Lap.Visible = false;
+                    rh.Positions.Visible = false;
+                    break;
+                case "race":
+                    
+                    rh.TitleMsg.Text = "Se pistea en";
+                    lp.lapCount = message.GetUShort();
+                    rh.Positions.Visible = true;
+                    break;
+                
+            }
+            
+        }
+        ushort countdown = 3;
+        public void Countdown(ref Message msg)
+        {
+            ushort t = msg.GetUShort();
+            countdown = t;
+            rh.Countdown.Text = $"{t}";
+
+            if (countdown == 3)
+            {
+                for(int i = 0; i < NetworkManager.playerCount +1; i++)
+                {
+                    var id = msg.GetUInt();
+                    var pos = msg.GetVector3();
+                    if(id == lp.id)
+                    {
+                        lp.TP(pos, Vector3.Normalize(new Vector3(-.98f, 0, .2f)));
+                    }
+
+                }
+                lp.positionLocked = true;
+                rh.Countdown.Visible = true;
+                lock(CarManager.onlinePlayers)
+                {
+
+                    CarManager.onlinePlayers.ForEach(op => op.lap = 0);
+                }
+            }
+            if (countdown == 0)
+            {
+                rh.Countdown.Text = "GO";
+                rh.Countdown.UpdateToFontValues();
+                lp.positionLocked = false;
+                rh.Positions.Visible = true;
+                UpdateLapPositions();
+                
+                rh.Lap.Visible = true;
+            }
+            if (countdown == 1000)
+            {
+                rh.Countdown.Visible = false;
+                rh.TitleMsg.Visible = false;
+
+
+            }
+        }
+        
+        public void UpdateLapPositions()
+        {
+            var str = "";
+            lock (CarManager.onlinePlayers)
+            {
+                var ord = CarManager.onlinePlayers.OrderByDescending(p => p.lap);
+                ord = ord.OrderByDescending(p => p.progress);
+                List<Player> ps = ord.ToList();
+                uint pos = 1;
+                var len = ord.Count();
+                var lapCount = CarManager.localPlayer.lapCount;
+                foreach (var p in ps)
+                {
+                    var lapProgress = 0f;
+                    if(p.lap >= 1 )
+                    {
+                        lapProgress = (p.progress + p.lap - 1);
+                    }
+                    
+                    var overallProgress = (int)(lapProgress * 100 / lapCount);
+
+                    str += $"{pos}- {p.name} {overallProgress}%\n";
+                }
+            }
+            rh.Positions.Text = str;
+
+            rh.Lap.Text = $"Vueltas {lp.lap} / {lp.lapCount}";
+
+        }
+        internal void SetServerRespose(string str)
+        {
+            rh.ServerResponse.Text = str;
+            rh.ServerResponse.Visible = true;
+        }
+
         // TODO: server side.
         //void PlayersCollision()
         //{
@@ -818,6 +1037,8 @@ namespace nix_cars.Components.States
                 return serializablePositions.Select(s => s.ToVector3()).ToList();
             }
         }
+
+        
     }
     [Serializable]
     public class SerializableVector3

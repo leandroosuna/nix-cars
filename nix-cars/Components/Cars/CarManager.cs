@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.Effects;
+using nix_cars.Components.Network;
 using nix_cars.Components.States;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace nix_cars.Components.Cars
 {
     public class CarManager
     {
-        static List<(string, Model)> carModels = new List<(string, Model)>();
+        static List<(ushort, string, Model)> carModels = new List<(ushort, string, Model)>();
         static List<CarColors> carColors = new List<CarColors>();
         static string[] carModelNames;
 
@@ -22,26 +23,27 @@ namespace nix_cars.Components.Cars
 
         public static LocalPlayer localPlayer;
         public static List<EnemyPlayer> players = new List<EnemyPlayer>();
+        public static List<Player> onlinePlayers = new List<Player>();
         const string ColorsFilePath = "Files/car-colors.xml";
-        public static Model GetModel(string name)
+        public static (ushort, Model) GetModel(string name)
         {
-            foreach (var (n, m) in carModels)
+            foreach (var (id, n, m) in carModels)
             {
-                if(name == n) return m;
+                if(name == n) return (id,m);
             }
-            return null;
+            return (ushort.MaxValue, null);
         }
         public static void Init()
         {
             game = NixCars.GameInstance();
             carModelNames = ["sport", "roadster", "hatchback", "f1", "muscle"];
 
-            for (int i = 0; i < carModelNames.Length; i++)
+            for (ushort i = 0; i < carModelNames.Length; i++)
             {
                 var name = carModelNames[i];
-                carModels.Add((name, game.Content.Load<Model>(NixCars.ContentFolder3D + "cars/" + name)));
+                carModels.Add((i, name, game.Content.Load<Model>(NixCars.ContentFolder3D + "cars/" + name)));
             }
-            foreach (var (_,m) in carModels)
+            foreach (var (_,_,m) in carModels)
                 NixCars.AssignEffectToModel(m, game.basicModelEffect.effect);
 
 
@@ -59,9 +61,13 @@ namespace nix_cars.Components.Cars
             
             var pc = new CarMuscle();
             localPlayer = new LocalPlayer(pc);
-           
+            
+            lock(onlinePlayers)
+            {
+                onlinePlayers.Add(localPlayer);
+            }
         }
-       
+        
         public static void UpdatePlayers()
         {
             lock (players)
@@ -69,6 +75,19 @@ namespace nix_cars.Components.Cars
                 foreach (var p in players)
                     p.Update();
                 players.RemoveAll(p => p.readyForRemoval);
+
+                lock (onlinePlayers)
+                {
+                    foreach (var p in players)
+                    {
+                        if (!onlinePlayers.Contains(p))
+                            onlinePlayers.Add(p);
+                    }
+                    
+                    onlinePlayers.RemoveAll(p => !players.Contains(p) && p != localPlayer);
+
+                }
+                
             }
         }
         public static void DrawPlayers()
@@ -105,6 +124,36 @@ namespace nix_cars.Components.Cars
             }
 
             return new EnemyPlayer(uint.MaxValue);
+        }
+        public static void ChangePlayerCar(Player p, Car car)
+        {
+            p.car.DestroyLights();
+            p.car = car;
+            car.Init(p);
+
+            if(p == localPlayer)
+            {
+                SaveColorsFrom(p.car);
+                // TODO: send to server, for other players to update the model.
+                NetworkManager.SendCarChange();
+            }
+
+        }
+        public static void CreatePlayerCar(Player p, ushort id, Vector3[] colors)
+        {
+            Car car = new CarSport();
+            switch (id)
+            {
+                case 0: break;
+                case 1: car = new CarRoadster(); break;
+                case 2: car = new CarHatchback(); break;
+                case 3: car = new CarF1(); break;
+                case 4: car = new CarMuscle(); break;
+            }
+            car.LoadModel();
+
+            car.colors = colors;
+            ChangePlayerCar(p, car);
         }
 
         public static void LoadColorsTo(List<Player> players)

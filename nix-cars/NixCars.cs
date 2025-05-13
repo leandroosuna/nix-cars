@@ -19,6 +19,7 @@ using MonoGameGum.GueDeriving;
 using Gum.Wireframe;
 using Gum.DataTypes;
 using nix_cars.Components.GUI;
+using nix_cars.Components.Sound;
 
 namespace nix_cars
 {
@@ -82,9 +83,17 @@ namespace nix_cars
             var cdm = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
             displayWidth = cdm.Width;
             displayHeight = cdm.Height;
+            
+            
+            if(CFG["ScreenWidth"].Value<int>() != 0)
+                SetRes(CFG["ScreenWidth"].Value<int>(), CFG["ScreenHeight"].Value<int>());
+            else
+            {
+                SetFullScreen(true);
+                SetRes(displayWidth, displayHeight);
+            }    
 
-            SetRes(CFG["ScreenWidth"].Value<int>(), CFG["ScreenHeight"].Value<int>());
-            IsMouseVisible = false;
+             IsMouseVisible = false;
 
 
             //SetFPSLimit(CFG["FPSLimit"].Value<int>());
@@ -104,7 +113,7 @@ namespace nix_cars
             }
             Exiting += (s, e) => {
 
-                //NetworkManager.Client.Disconnect();
+                NetworkManager.Client.Disconnect();
                 NetworkManager.StopNetThread();
                 mainStopwatch.Stop();
 
@@ -140,9 +149,9 @@ namespace nix_cars
             gizmos.LoadContent(GraphicsDevice);
 
             mainStopwatch.Start();
-            //NetworkManager.Connect();
+            NetworkManager.Connect();
             FloatingPlaneDrawer.Init();
-
+            SoundManager.LoadContent();
         }
         
         protected override void Update(GameTime gameTime)

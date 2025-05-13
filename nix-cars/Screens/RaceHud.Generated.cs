@@ -52,6 +52,8 @@ partial class RaceHud : MonoGameGum.Forms.Controls.FrameworkElement
     public ContainerRuntime AbilityIndicator2 { get; protected set; }
     public TextBox CommandBox { get; protected set; }
     public TextRuntime ServerResponse { get; protected set; }
+    public TextRuntime RTT { get; protected set; }
+    public TextRuntime FPS { get; protected set; }
 
     public RaceHud(InteractiveGue visual) : base(visual) { }
     public RaceHud()
@@ -79,6 +81,8 @@ partial class RaceHud : MonoGameGum.Forms.Controls.FrameworkElement
         AbilityIndicator2 = this.Visual?.GetGraphicalUiElementByName("AbilityIndicator2") as ContainerRuntime;
         CommandBox = MonoGameGum.Forms.GraphicalUiElementFormsExtensions.GetFrameworkElementByName<TextBox>(this.Visual,"CommandBox");
         ServerResponse = this.Visual?.GetGraphicalUiElementByName("ServerResponse") as TextRuntime;
+        RTT = this.Visual?.GetGraphicalUiElementByName("RTT") as TextRuntime;
+        FPS = this.Visual?.GetGraphicalUiElementByName("FPS") as TextRuntime;
         CustomInitialize();
     }
     //Not assigning variables because Object Instantiation Type is set to By Name rather than Fully In Code

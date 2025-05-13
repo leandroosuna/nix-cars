@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace nix_cars.Components.GUI
 {
@@ -17,6 +18,11 @@ namespace nix_cars.Components.GUI
         static GumService Gum => GumService.Default;
         static GumProjectSave GumProject;
         static GraphicalUiElement GumRoot;
+
+        static GraphicalUiElement gueStartMenu;
+        static GraphicalUiElement gueCarSelect;
+        static GraphicalUiElement gueOptions;
+        static GraphicalUiElement gueRaceHud;
 
         static NixCars game;
         static Screen currentScreen;
@@ -29,6 +35,11 @@ namespace nix_cars.Components.GUI
             game = g;
             
             GumProject = Gum.Initialize(g, "GUM/gum.gumx");
+            
+            gueStartMenu = GumProject.Screens.Find(item => item.Name == "StartMenu").ToGraphicalUiElement();
+            gueCarSelect = GumProject.Screens.Find(item => item.Name == "CarSelect").ToGraphicalUiElement();
+            gueOptions = GumProject.Screens.Find(item => item.Name == "Options").ToGraphicalUiElement();
+            gueRaceHud = GumProject.Screens.Find(item => item.Name == "RaceHud").ToGraphicalUiElement();
 
             SwitchTo(Screen.MAIN, false);
 
@@ -45,23 +56,39 @@ namespace nix_cars.Components.GUI
         {
             return currentScreen == s;
         }
+        //public static void SwitchTo(Screen s, bool clear = true)
+        //{
+        //    if(clear)
+        //        GumRoot.RemoveFromRoot();
+
+        //    string name = "StartMenu";
+        //    switch (s)
+        //    {
+        //        case Screen.MAIN: name = "StartMenu";break;
+        //        case Screen.CARSELECT: name = "CarSelect"; break;
+        //        case Screen.OPTIONS: name = "Options"; break;
+        //        case Screen.RACEHUD: name = "RaceHud"; break;
+        //    }
+        //    currentScreen = s;
+        //    GumRoot = GumProject.Screens.Find(item => item.Name == name).ToGraphicalUiElement();
+        //    GumRoot.AddToRoot();
+        //}
         public static void SwitchTo(Screen s, bool clear = true)
         {
-            if(clear)
+            if (clear)
                 GumRoot.RemoveFromRoot();
 
-            string name = "StartMenu";
+            currentScreen = s;
             switch (s)
             {
-                case Screen.MAIN: name = "StartMenu";break;
-                case Screen.CARSELECT: name = "CarSelect"; break;
-                case Screen.OPTIONS: name = "Options"; break;
-                case Screen.RACEHUD: name = "RaceHud"; break;
+                case Screen.MAIN: GumRoot = gueStartMenu; break;
+                case Screen.CARSELECT: GumRoot = gueCarSelect; break;
+                case Screen.OPTIONS: GumRoot = gueOptions; break;
+                case Screen.RACEHUD: GumRoot = gueRaceHud; break;
             }
-            currentScreen = s;
-            GumRoot = GumProject.Screens.Find(item => item.Name == name).ToGraphicalUiElement();
             GumRoot.AddToRoot();
         }
+
         public static void Clear()
         {
             GumRoot.RemoveFromRoot();

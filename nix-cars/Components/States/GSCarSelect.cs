@@ -188,7 +188,6 @@ namespace nix_cars.Components.States
             game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            
             DrawCars();
 
             game.GraphicsDevice.SetRenderTargets(game.lightTarget, game.blurHTarget, game.blurVTarget);
@@ -220,12 +219,10 @@ namespace nix_cars.Components.States
         }
         public void SelectAndEnter()
         {
-            //TODO: send to server, for other players to update the model. move to CarManager?
-            CarManager.localPlayer.car = carPlayers[carInFocus].car;
-            CarManager.localPlayer.car.p = CarManager.localPlayer;
-            CarManager.SaveColorsFrom(CarManager.localPlayer.car);
-
+           
             GameStateManager.SwitchTo(State.RUN);
+            CarManager.ChangePlayerCar(CarManager.localPlayer,carPlayers[carInFocus].car);
+             
         }
         void DrawCars()
         {

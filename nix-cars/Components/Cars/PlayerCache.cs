@@ -11,6 +11,8 @@ namespace nix_cars.Components.Cars
         public float yaw, pitch;
         public Vector2 horizontalVelocity;
         public bool f, b, l, r, boost;
+        public float progress;
+        public ushort lap;
         public PlayerCache(ref Message message, long now)
         {
             timeStamp = now;
@@ -24,6 +26,8 @@ namespace nix_cars.Components.Cars
             r = message.GetBool();
             boost = message.GetBool();
 
+            progress = message.GetFloat();
+            lap = message.GetUShort();
         }
     }
 }

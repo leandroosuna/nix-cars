@@ -12,7 +12,8 @@ namespace nix_cars.Components.Cars
     {
         public override void LoadModel()
         {
-            model = CarManager.GetModel("muscle");
+            base.LoadModel();
+            (id, model) = CarManager.GetModel("muscle");
             colors = [new Vector3(0,1f,.2f), Vector3.One, Vector3.One];
         }
         public override void Draw()

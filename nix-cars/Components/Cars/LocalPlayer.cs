@@ -22,6 +22,7 @@ namespace nix_cars.Components.Cars
 
         public float maxSpeed = 80.0f;
         public float maxSpeedBoost = 110.0f;
+        public float maxReverseSpeed = 30f;
         public float boostTimeMax = 3;
         public float boostTimeRemaining = 0;
 
@@ -51,14 +52,13 @@ namespace nix_cars.Components.Cars
         public FloatingLightTrail lightTrailL;
         public FloatingLightTrail lightTrailR;
 
+        public bool positionLocked;
         public LocalPlayer(Car car) : base(car )
         {
             game = NixCars.GameInstance();
             name = game.CFG["PlayerName"].Value<string>();
 
-            nameTag = new FloatingText();
-            nameTag.SetText(name);
-            FloatingPlaneDrawer.Add(nameTag);
+            
 
             floatingBoost = new FloatingBoostMeter();
             FloatingPlaneDrawer.Add(floatingBoost);
@@ -99,7 +99,7 @@ namespace nix_cars.Components.Cars
             var mx = Matrix.CreateFromYawPitchRoll(camYaw + MathF.PI, pitch + MathHelper.PiOver2, 0f)
                 * Matrix.CreateTranslation(position + Vector3.Up * 3f);
 
-            nameTag.SetRT(mx);
+            //nameTag.SetRT(mx);
 
             mx = Matrix.CreateFromYawPitchRoll(yaw, 0, 0f)
                 * Matrix.CreateTranslation(position + Vector3.Up * 0.25f - frontDirection * 3.5f);
@@ -122,15 +122,18 @@ namespace nix_cars.Components.Cars
             //lightTrailR.Update(boosting, deltaTime);
         }
 
-        public void TP(Vector3 loc)
+        public void TP(Vector3 loc, Vector3 fd)
         {
             position = loc;
-            yaw = 0;
-            pitch = 0;
+
+            frontDirection = fd;
+            yaw = MathF.Atan2(frontDirection.X, frontDirection.Z);
+            pitch = MathF.Asin(frontDirection.Y);
+            
+            CalculateWorld();
             game.camera.position = position - frontDirection * 5
                     + Vector3.Up * 5;
 
-            CalculateWorld();
             car.HandleLights(inB, boosting);
             car.CalculateLightsPosition();
             car.UpdateCollider();
@@ -174,27 +177,56 @@ namespace nix_cars.Components.Cars
         }
         void Engine(bool f, bool b, float deltaTime)
         {
+            if(positionLocked)
+            {
+                speed = 0;
+                return;
+            }
+
             if (f)
             {
+                if(boosting)
+                {
+                    if (speed < maxSpeedBoost)
+                        speed += accelerationBoost * deltaTime;
+                }
+                else
+                {
+                    if (speed < maxSpeed)
+                        speed += acceleration * deltaTime;
 
-                speed += (boosting?accelerationBoost : acceleration) * deltaTime;
+                    
+
+
+
+                }
             }
             else if (b)
             {
                 if (speed > 0)
                     speed -= brakeForce * deltaTime;
                 else
-                    speed -= acceleration * 0.5f * deltaTime;
+                {
+                    if (speed > -maxReverseSpeed)
+                        speed -= acceleration * 0.5f * deltaTime;
+                }
+
+                
             }
             else
             {
+                
+                
+                
                 float deceleration = friction * deltaTime;
                 speed = speed > 0 ?
                     Math.Max(speed - deceleration, 0) :
                     Math.Min(speed + deceleration, 0);
             }
-
-            speed = MathHelper.Clamp(speed, -maxSpeed / 4, boosting? maxSpeedBoost : maxSpeed);
+            var stopBoost = speed > maxSpeed && !boosting;
+            if (stopBoost)
+                speed -= brakeForce * deltaTime;
+            //speed = MathHelper.Clamp(speed, -maxSpeed / 4, boosting? maxSpeedBoost : maxSpeed);
             
 
             float distanceMoved = speed * deltaTime;

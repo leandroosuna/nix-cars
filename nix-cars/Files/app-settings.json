@@ -1,6 +1,6 @@
 ﻿{
-  "ScreenWidth": 1366,
-  "ScreenHeight": 768,
+  "ScreenWidth": 1280,
+  "ScreenHeight": 720,
   "Fullscreen": false,
   "GraphicsPreset": "ultra",
   "VSync": false,

@@ -22,7 +22,7 @@ namespace nix_cars.Components.States.Input
         public Key Backward2;
         public Key Left2;
         public Key Right2;
-
+        public Key Reset;
         public Key Fire;
         public Key Boost;
         
@@ -81,6 +81,7 @@ namespace nix_cars.Components.States.Input
             Left2 = ConvertKey(keys.KeyLeft2);
             Right2 = ConvertKey(keys.KeyRight2);
 
+            Reset = ConvertKey(keys.KeyReset);
             Fire = ConvertKey(keys.KeyFire);
             Boost = ConvertKey(keys.KeyBoost);
             
@@ -95,7 +96,7 @@ namespace nix_cars.Components.States.Input
             {
                 Enter, Escape,
                 Forward, Backward, Left, Right,
-                Forward2, Backward2, Left2, Right2, Fire, Boost, 
+                Forward2, Backward2, Left2, Right2, Reset, Fire, Boost, 
                 Ability1, Ability2, Ability3, Ability4
             });
             
@@ -131,6 +132,8 @@ namespace nix_cars.Components.States.Input
         public Keys KeyBackward2 { get; set; }
         public Keys KeyLeft2 { get; set; }
         public Keys KeyRight2 { get; set; }
+
+        public Keys KeyReset{ get; set; }
 
         public Keys KeyFire { get; set; }
         public Keys KeyBoost{ get; set; }

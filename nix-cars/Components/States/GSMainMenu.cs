@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Linq;
+using nix_cars.Components.Cars;
 using nix_cars.Components.GUI;
+using nix_cars.Components.Network;
 using nix_cars.Screens;
 using SharpDX.Direct3D9;
 
@@ -8,6 +11,8 @@ namespace nix_cars.Components.States
 {
     public class GSMainMenu : GameState
     {
+        StartMenu sm;
+        string name;
         public GSMainMenu() : base()
         {
         
@@ -17,6 +22,9 @@ namespace nix_cars.Components.States
             game.IsMouseVisible = true;
             mouseLocked = false;
             GumManager.SwitchTo(Screen.MAIN);
+            sm = GumManager.GetStartMenu();
+
+            name = game.CFG["PlayerName"].Value<string>();
         }
         
         public override void Update(GameTime gameTime)
@@ -31,23 +39,35 @@ namespace nix_cars.Components.States
             {
                 game.Exit();
             }
-            var s = GumManager.GetStartMenu();
+            
             if (km.KeyDownOnce(km.Enter))
             {
-                if (s.NameBox.Text == "")
-                {
-                    s.ToastError.TextInstance.Text = "Ingresa tu nombre para entrar";
-                    s.ToastError.IsVisible = true;
-                    s.timer.Start();
-                }
-                else
-                {
-                    GameStateManager.SwitchTo(State.CARSELECT);
-                }
+                HandleEnterGame();
             }
 
             FinishUpdate();
         }
+        public void HandleEnterGame()
+        {
+            if (sm.NameBox.Text == "")
+            {
+                sm.ToastError.TextInstance.Text = "Ingresa tu nombre para entrar";
+                sm.ToastError.IsVisible = true;
+                sm.timer.Start();
+            }
+            else
+            {
+                if(sm.NameBox.Text != name)
+                {
+                    CarManager.localPlayer.name = sm.NameBox.Text;
+                    game.CFG["PlayerName"] = sm.NameBox.Text;
+                    game.SaveCFG();
+                    NetworkManager.SendPlayerIdentity();
+                }
+                GameStateManager.SwitchTo(State.CARSELECT);
+            }
+        }
+
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);

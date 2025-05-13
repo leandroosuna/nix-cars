@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Xna.Framework;
+using Newtonsoft.Json.Linq;
 using nix_cars.Components.Cars;
 using nix_cars.Components.States;
 using Riptide;
@@ -123,6 +124,7 @@ namespace nix_cars.Components.Network
             msg.AddBool(lp.inR);
             msg.AddBool(lp.inBoost);
 
+            msg.AddFloat(lp.progress);
             Client.Send(msg);
         }
 
@@ -167,6 +169,88 @@ namespace nix_cars.Components.Network
             msg.AddInt(game.CFG["Version"].Value<int>());
             Client.Send(msg);
         }
+
+        public static void SendCommand(string cmd)
+        {
+            Message msg = Message.Create(MessageSendMode.Reliable, ClientToServer.Command);
+            msg.AddUInt(localPlayer.id);
+            msg.AddString(cmd);
+            Client.Send(msg);
+        }
+
+        public static void SendLap(bool forward)
+        {
+            Message msg = Message.Create(MessageSendMode.Reliable, ClientToServer.Lap);
+            msg.AddUInt(localPlayer.id);
+            msg.AddBool(forward);
+            Client.Send(msg);
+        }
+        public static void SendCarChange()
+        {
+            var c = localPlayer.car;
+            var cc = c.colors;
+            var l = (ushort)cc.Length;
+
+            Message msg = Message.Create(MessageSendMode.Reliable, ClientToServer.CarChange);
+            msg.AddUInt(localPlayer.id);
+            msg.AddUShort(c.id);
+            msg.AddUShort(l);
+            for (int i = 0; i<l; i++)
+            {
+                msg.AddVector3(cc[i]);
+            }
+            Client.Send(msg);
+        }
+        
+        [MessageHandler((ushort)ServerToClient.CarChange)]
+        private static void HandleCarChange(Message message)
+        {
+            var id = message.GetUInt();
+            if (id == localPlayer.id)
+                return;
+
+            var vehicleType = message.GetUShort();
+            var colorsCount = message.GetUShort();
+            Vector3[] colors = new Vector3[colorsCount];
+            
+            for(ushort i = 0; i<colorsCount;i++)
+            {
+                colors[i] = message.GetVector3();
+            }
+            EnemyPlayer e = (EnemyPlayer)CarManager.GetPlayerFromId(id, true);
+
+            CarManager.CreatePlayerCar(e, vehicleType, colors);
+            //CarManager.ChangePlayerCar(e, car);
+
+
+        }
+
+        [MessageHandler((ushort)ServerToClient.GameModeChange)]
+        private static void HandleGameModeChange(Message message)
+        {
+            GameStateManager.run.GameModeChange(message);
+        }
+
+        [MessageHandler((ushort)ServerToClient.RaceStartCountdown)]
+        private static void HandleRaceCountDown(Message message)
+        {
+            
+            GameStateManager.run.Countdown(ref message); 
+        }
+
+        [MessageHandler((ushort)ServerToClient.CommandResponse)]
+        private static void HandleCommandResponse(Message message)
+        { 
+             GameStateManager.run.SetServerRespose(message.GetString());
+           
+        }
+        [MessageHandler((ushort)ServerToClient.Lap)]
+        private static void HandleLap(Message message)
+        {
+            CarManager.localPlayer.lap = message.GetUShort();
+        }
+
+
         [MessageHandler((ushort)ServerToClient.Version)]
         private static void HandleVersion(Message message)
         {

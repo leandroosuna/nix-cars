@@ -64,8 +64,8 @@ namespace nix_cars.Components.Cars
             }
             if (netDataCache.Count < 2)
                 return;
-
-                var renderBehind = 30; // ms TODO: fix TPS dependent
+            // TODO: fix TPS dependent
+            var renderBehind = 30;//ms 
             var interpolationFactor = 0.05f; // wont be perfect, but good enough
             var now = NetworkManager.GetHighPrecisionTime() - renderBehind;
 
@@ -109,7 +109,8 @@ namespace nix_cars.Components.Cars
             wheelRotationAngle += distanceMoved / car.wheelRadius;
             wheelRotationAngle = MathHelper.WrapAngle(wheelRotationAngle);
 
-
+            progress = newer.progress;
+            lap = newer.lap;
             CalculateWorld();
             car.HandleLights(newer.b,newer.boost);
             car.CalculateLightsPosition();

@@ -9,6 +9,7 @@
   "keyLeft2": "Left",
   "keyBackward2": "Down",
   "keyRight2": "Right",
+  "keyReset":  "R",
 
   "KeyFire": "F20",
   "KeyBoost": "E",

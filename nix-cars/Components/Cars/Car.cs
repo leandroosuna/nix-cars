@@ -2,14 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using nix_cars.Components.Collisions;
 using nix_cars.Components.Lights;
-using nix_cars.Components.States;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+
 
 namespace nix_cars.Components.Cars
 {
@@ -40,6 +33,9 @@ namespace nix_cars.Components.Cars
 
         public Player p;
 
+        public bool modelLoaded = false;
+
+        public ushort id;
         public void Init(Player p)
         {
             this.p = p;
@@ -57,7 +53,8 @@ namespace nix_cars.Components.Cars
 
             collider = new OrientedBoundingBox(Vector3.Zero, colliderExtents);
 
-            LoadModel();
+            if(!modelLoaded)
+                LoadModel();
         }
         public void DestroyLights()
         {
@@ -67,7 +64,10 @@ namespace nix_cars.Components.Cars
             lm.Destroy(frontL);
             lm.Destroy(frontR);
         }
-        public abstract void LoadModel();
+        public virtual void LoadModel()
+        {
+            modelLoaded = true;
+        }
 
         public void HandleLights(bool b, bool boosting)
         {

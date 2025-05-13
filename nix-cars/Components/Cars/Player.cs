@@ -42,7 +42,9 @@ namespace nix_cars.Components.Cars
         public float wheelRotationAngle;
         public float currentTurnRate;
 
-
+        public float progress;
+        public ushort lap = 0;
+        public ushort lapCount = 4;
         public LinkedList<PlayerCache> netDataCache = new LinkedList<PlayerCache>();
         public FloatingText nameTag;
         public NixCars game;

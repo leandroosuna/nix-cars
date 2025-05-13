@@ -109,7 +109,8 @@ namespace nix_cars.Components.Cameras
         Vector3 targetDirection;
         Vector3 targetPosition;
         public float smoothRotateSpeed = 3f;
-        public float smoothMoveSpeed = 12f;
+        //public float smoothMoveSpeed = 12f; // slow
+        public float smoothMoveSpeed = 20f; // 
 
         public void SmoothRotateTo(Vector3 target)
         {
